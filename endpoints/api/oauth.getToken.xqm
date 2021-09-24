@@ -45,7 +45,7 @@ function oauth:main( $code as xs:string, $state as xs:string ){
           session:set( "login", $userEmail ),
           session:set( "displayName", $userInfo?displayName ),
           session:set( 'userAvatarURL', $userInfo?avatar ),
-          web:redirect( config:param( 'rootPath' ) || '/u'  ) 
+          web:redirect( config:param( 'host' ) || config:param( 'rootPath' ) || '/u'  ) 
         )
     )
     else(
