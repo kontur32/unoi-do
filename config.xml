@@ -1,0 +1,21 @@
+<config>
+  <param id="mode">login</param> <!-- maintenance / login / redirect  -->
+  <param id="redirect">/unoi/do</param>
+  <param id="rootPath">/unoi/do</param>
+  <param id="loginEndPoint">/unoi/do/api/v01/login</param>
+  <param id="oauthEndpoint">http://portal.titul24.ru/oauth/authorize?client_id=yeT4SZJ67vi0caaIMD7WB8iUA2cYfPWO3PTWPC3W&amp;response_type=code&amp;state=state</param>
+  
+  <param id="host">http://localhost:9984</param>
+  <param id="authHost">http://portal.titul24.ru</param>  
+  
+  <param id="accessID"></param>
+  <param id="login">liceeperspektiva@yandex.ru</param>
+  <param id="password">Ivanovo2017ivanovO</param>
+  
+  <param id="logDir">C:\Program Files (x86)\BaseX\webapp\unoi\шаблон\logs\</param>
+  <param id="defaultAvatarURL">https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/50px-Unknown_person.jpg</param>
+  
+  <!-- доступ к данным -->
+  <param id = "api.method.getData">http://iro37.ru:9984/trac/api/v0.1/u/data/</param>
+  <param id = "fileStore.Saas.main">d31b7665-5466-449b-8a07-fb29a5d95f48</param>
+</config>
