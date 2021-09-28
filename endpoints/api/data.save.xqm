@@ -10,50 +10,57 @@ declare
   %rest:form-param ( "_t24_saveRedirect", "{ $redirect }", "/" )
   %rest:path( "/unoi/do/api/v01/data" )
 function data:main( $templateID, $id, $aboutType, $redirect ){
-   let $paramNames := 
-      for $name in  distinct-values( request:parameter-names() )
-      where not ( starts-with( $name, "_t24_" ) )
-      return $name 
+   let $userID := 
+     json:parse( convert:binary-to-string( xs:base64Binary( tokenize( session:get( "accessToken" ), '\.' )[ 2 ] || '=' ) ) )
+    /json/data/user/id/text()
    
-   let $userID := session:get( "userid" )
-     
-     let $params := 
-       map{
-         "userID" : $userID,
-         "currentID" : if( $id = "" )then( random:uuid() )else( $id ),
-         "aboutType" : $aboutType,
-         "templateID" : $templateID,
-         "modelURL" : 'http://localhost:9984/zapolnititul/api/v2/forms/' || $templateID || '/model',
-         "paramNames" : $paramNames
-       }
+   return
+     if( $userID )
+     then(
+     let $paramNames := 
+        for $name in  distinct-values( request:parameter-names() )
+        where not ( starts-with( $name, "_t24_" ) )
+        return $name  
        
-  let $dataRecord :=  data:buildDataRecord( $params )
-  let $auth := "Bearer " || session:get( "accessToken")
-  let $response :=
-   http:send-request(
-     <http:request method='POST'>
-        <http:header name="Authorization" value= '{ $auth }'/>
-        <http:multipart media-type = "multipart/form-data">
-            <http:header name="Content-Disposition" value= 'form-data; name="data";'/>
-            <http:body media-type = "application/xml" >
-              { $dataRecord }
-            </http:body>
-        </http:multipart> 
-      </http:request>,
-     config:param( 'api.method.getData' )
-    )
-  let $reponseCode := $response[ 1 ]/@status/data()
-  let $message := 
-    if( $reponseCode = '200' )
-    then( 'Изменения сохранены' )
-    else( $response )
-  return
-    web:redirect(
-      web:create-url(
-        $redirect,
-        map{ 'message' : $message }
+       let $params := 
+         map{
+           "userID" : $userID,
+           "currentID" : if( $id = "" )then( random:uuid() )else( $id ),
+           "aboutType" : $aboutType,
+           "templateID" : $templateID,
+           "modelURL" : 'http://localhost:9984/zapolnititul/api/v2/forms/' || $templateID || '/model',
+           "paramNames" : $paramNames
+         }
+         
+    let $dataRecord :=  data:buildDataRecord( $params )
+    let $auth := "Bearer " || session:get( "accessToken")
+    let $response :=
+     http:send-request(
+       <http:request method='POST'>
+          <http:header name="Authorization" value= '{ $auth }'/>
+          <http:multipart media-type = "multipart/form-data">
+              <http:header name="Content-Disposition" value= 'form-data; name="data";'/>
+              <http:body media-type = "application/xml" >
+                { $dataRecord }
+              </http:body>
+          </http:multipart> 
+        </http:request>,
+       config:param( 'api.method.getData' )
+      )
+    let $reponseCode := $response[ 1 ]/@status/data()
+    let $message := 
+      if( $reponseCode = '200' )
+      then( 'Изменения сохранены' )
+      else( $response )
+    return
+      web:redirect(
+        web:create-url(
+          $redirect,
+          map{ 'message' : $message }
+        )
       )
     )
+    else( <err:AUTH01>ID пользователя не определен</err:AUTH01> )
 };
 
 declare 

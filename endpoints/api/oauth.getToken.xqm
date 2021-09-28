@@ -14,9 +14,9 @@ function oauth:main( $code as xs:string, $state as xs:string ){
             <http:header name="Content-Disposition" value= 'form-data; name="code";'/>
             <http:body media-type = "text/plain" >{ $code }</http:body>
             <http:header name="Content-Disposition" value= 'form-data; name="client_id";' />
-            <http:body media-type = "text/plain">yeT4SZJ67vi0caaIMD7WB8iUA2cYfPWO3PTWPC3W</http:body>
+            <http:body media-type = "text/plain">{ config:param( 'OAuthClienID' ) }</http:body>
             <http:header name="Content-Disposition" value= 'form-data; name="client_secret";' />
-            <http:body media-type = "text/plain">8mWkx72jK9gmizhTBtSRjOGnEzkucnqkJnFguIAf</http:body>
+            <http:body media-type = "text/plain">{ config:param( 'OAuthClienSecret' ) }</http:body>
             <http:header name="Content-Disposition" value= 'form-data; name="grant_type";' />
             <http:body media-type = "text/plain">authorization_code</http:body>
         </http:multipart> 
@@ -34,6 +34,7 @@ function oauth:main( $code as xs:string, $state as xs:string ){
         'http://portal.titul24.ru/oauth/me?access_token=' || $accessToken
       )
     )
+
   let $userEmail := $userInfo//user__email/text()
   return
     if( $userEmail )
