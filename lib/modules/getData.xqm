@@ -20,10 +20,8 @@ declare function getData:getToken( $host, $username, $password )
         $host || "/wp-json/jwt-auth/v1/token"
     )
     return
-      if ( $response[ 1 ]/@status/data() = "200" )
-      then(
-        $response[ 2 ]//token/text()
-      )
+      if( $response[ 1 ]/@status/data() = "200" )
+      then( $response[ 2 ]//token/text() )
       else()
 };
 
@@ -32,7 +30,7 @@ declare
 function
   getData:getData( $xquery, $params as map(*), $access_token ) 
 {
-  let $apiURL := 'http://localhost:9984/trac/api/v0.1/u/data'
+  let $apiURL := config:param( 'dataHost' ) || '/trac/api/v0.1/u/data'
   let $parameters :=
     map:merge(
       (

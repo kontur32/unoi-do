@@ -36,16 +36,12 @@ function login:main( $login as xs:string, $password as xs:string, $redirect, $gu
 };
 
 declare function login:getUserMeta( $login, $password ){
-  
-    if( 1 )
-    then(
-        map{
-          'displayName' : $login,
-          'accessToken' : login:getToken( config:param( 'authHost' ), config:param( 'login' ), config:param( 'password' ) ),
-          'avatar' : ''
-        }
-    )
-    else( map{ 'error' : 'ошибка логина' } )
+  map{
+    'displayName' : $login,
+    'accessToken' : login:getToken( config:param( 'authHost' ), config:param( 'login' ), config:param( 'password' ) ),
+    'avatar' : ''
+  }
+ 
 };
 
 declare

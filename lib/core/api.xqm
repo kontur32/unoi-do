@@ -19,3 +19,11 @@ declare function api:getData.getFileFromMainStore( $params as map(*) ){
 declare function api:getData.getFile( $params as map(*) ){
   getData:getFile(  $params?path, $params?xq, $params?storeID )
 };
+
+declare function api:getData.data( $params as map(*) ){
+  getData:getData( 
+    $params?xq,
+    if( empty( $params?queryParams ) )then( map{} )else( $params?queryParams ),
+    session:get( 'accessToken' )
+  )
+};
