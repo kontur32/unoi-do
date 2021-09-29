@@ -22,7 +22,7 @@ declare function getData:getToken( $host, $username, $password )
     return
       if( $response[ 1 ]/@status/data() = "200" )
       then( $response[ 2 ]//token/text() )
-      else()
+      else( $response )
 };
 
 declare

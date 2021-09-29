@@ -32,20 +32,12 @@ function data:main( $templateID, $id, $aboutType, $redirect ){
            "paramNames" : $paramNames
          }
          
-    let $dataRecord :=  data:buildDataRecord( $params )
-    let $auth := "Bearer " || session:get( "accessToken")
+    let $dataRecord :=  data:buildDataRecord( data:dataRecord( $params ) )
     let $response :=
-     http:send-request(
-       <http:request method='POST'>
-          <http:header name="Authorization" value= '{ $auth }'/>
-          <http:multipart media-type = "multipart/form-data">
-              <http:header name="Content-Disposition" value= 'form-data; name="data";'/>
-              <http:body media-type = "application/xml" >
-                { $dataRecord }
-              </http:body>
-          </http:multipart> 
-        </http:request>,
-       config:param( 'api.method.getData' )
+      data:postRecord(
+        $dataRecord,
+        config:param( 'api.method.getData' ),
+        session:get( "accessToken")
       )
     let $reponseCode := $response[ 1 ]/@status/data()
     let $message := 
@@ -65,9 +57,7 @@ function data:main( $templateID, $id, $aboutType, $redirect ){
 
 declare 
   %private
-function data:buildDataRecord( $params ){
-   let $record := data:dataRecord( $params )
-     
+function data:buildDataRecord( $record ){
    let $model := <table/>
       
    let $request :=
@@ -136,4 +126,21 @@ function data:dataRecord( $params ){
         }
       </row>
     </table>
+};
+
+declare function data:postRecord( $dataRecord, $path, $accessToken ){
+  let $auth := "Bearer " || $accessToken
+  return
+     http:send-request(
+       <http:request method='POST'>
+          <http:header name="Authorization" value= '{ $auth }'/>
+          <http:multipart media-type = "multipart/form-data">
+              <http:header name="Content-Disposition" value= 'form-data; name="data";'/>
+              <http:body media-type = "application/xml" >
+                { $dataRecord }
+              </http:body>
+          </http:multipart> 
+        </http:request>,
+       $path
+      )
 };
