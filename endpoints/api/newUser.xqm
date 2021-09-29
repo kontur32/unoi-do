@@ -110,10 +110,10 @@ declare function newUser:создатьПользователяМудл( $пол
   json:parse(
     fetch:text(
       web:create-url(
-        'http://sdo.unoi.ru/login/token.php',
+        config:param('moodle.method.token.get'),
         map{
-          'username' : 'kontur32@yandex.ru',
-          'password' : 'Ivanovo2020!',
+          'username' :  config:param('moodle.login'),
+          'password' : config:param('moodle.password'),
           'service' : 'trac'
         }
       )
@@ -122,7 +122,7 @@ declare function newUser:создатьПользователяМудл( $пол
 return
   fetch:xml(
       web:create-url(
-        'http://sdo.unoi.ru/webservice/rest/server.php',
+        config:param('moodle.method.user.create'),
         map:merge(
           (
             map{
