@@ -4,7 +4,7 @@ declare function user:main( $params as map(*) ){
   let $p :=    
        map{
         'header' : $params?_t( 'header', map{} ),
-        'content' : $params?_t( 'content', map{} ),
+        'content' : $params?_t( 'content' || $params?part, map{} ),
         'footer' : $params?_t( 'footer', map{} )
       }
   return
