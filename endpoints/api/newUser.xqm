@@ -75,15 +75,18 @@ declare function newUser:записьЛичномКабинете( $userLogin ){
       )
   let $newUserID := 
     'http://dbx.iro37.ru/unoi/сущности/учащиеся#' || $userHash
-  
+  let $templateID :=
+    tokenize( config:param( 'моделиЛичногоКабинета' ), ',' )[ 1 ]
+  let $modelURL :=
+    'http://localhost:9984/zapolnititul/api/v2/forms/' || $templateID || '/model'
   let $dataRecord :=
     <table
         id = "{ random:uuid() }"
         label = "{ $userLogin }"
         aboutType = "https://schema.org/Person" 
-        templateID = "3a483137-d7c9-469f-98b0-6583d5ba8244" 
+        templateID = "{ $templateID }" 
         userID = "220" 
-        modelURL = "http://localhost:9984/zapolnititul/api/v2/forms/7fe8990b-0289-4498-b329-e43c19ac6232/model"
+        modelURL = "{ $modelURL }"
         status = "active"
         updated="{ current-dateTime() }">
         <row id = "{ $newUserID }" aboutType = "https://schema.org/Person">
