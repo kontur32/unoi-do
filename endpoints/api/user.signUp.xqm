@@ -16,10 +16,7 @@ declare
 function signUp:main( $coursID as xs:string, $redirect ){
   let $templateID := '7da6b3ba-961a-4147-9607-31e89b8deed8'
   let $userID := template:tpl( 'serviceFunctions/userID', map{} )/result/text()
-  let $названиеКурса :=
-    fetch:xml(
-      'http://iro37.ru:9984/unoi/do/api/v01/user/signup?course=' || $coursID
-    )/data/table/row/cell[ @label = "Название ДПП" ]/text()
+  let $названиеКурса := 1
    
   return 
     <table
