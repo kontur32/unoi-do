@@ -8,7 +8,7 @@ declare
   %output:method( "xhtml" )
   %output:doctype-public( "www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" )
 function inkwi:main( $area, $part ){
-    switch( $part )
-    case 'cabinet' return template:tpl( 'views/user', map{ 'part' : '/cabinet'} )
+    switch( $area )
+    case 'u' return template:tpl( 'views/user', map{ 'part' : '/' || $part } )
     default return template:tpl( 'views', map{} )
 };

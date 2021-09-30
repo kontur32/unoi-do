@@ -1,6 +1,5 @@
 module namespace check = "check";
 
-
 declare 
   %perm:check( "/unoi/do/u" )
 function check:userArea(){
@@ -8,4 +7,10 @@ function check:userArea(){
   where empty( $user )
   return
     web:redirect( "/unoi/do" )
+};
+
+declare 
+  %perm:check( "/unoi/do/u" )
+function check:cacheAPI(){
+  
 };
