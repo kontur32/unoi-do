@@ -6,7 +6,7 @@ declare function defaultFormField:main( $params as map(*) ){
     'templateID' : $params?templateID,
     'aboutType' : $params?aboutType,
     'formName' : $params?formName,
-    'saveRedirect' : '/unoi/do/u',
+    'saveRedirect' : '/unoi/do/u/cabinet',
     'formAction' : '/unoi/do/api/v01/data',
     'enctype' : 'multipart/form-data'
   }

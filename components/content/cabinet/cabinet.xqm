@@ -35,14 +35,18 @@ declare function cabinet:main( $params ){
 };
 
 declare function cabinet:getData( $params, $userID, $templateID ){
-  let $xqTemplate :=
-    'declare variable $params external; .[ @templateID = "%1" ][ row[ @id = $params?userID ] ]'
-  let $xq := replace( $xqTemplate, '%1', $templateID )
+  let $xq :=
+    'declare variable $params external; .[ @templateID = $params?templateID ][ row[ @id = $params?userID ] ]'
+
   let $data := 
     $params?_api(
       'getData.data',
-      map{ 'xq' : $xq, 'queryParams' : map{ 'userID' : $userID } }
+      map{
+        'xq' : $xq,
+        'queryParams' : map{ 'userID' : $userID, 'templateID' : $templateID }
+      }
     )/data/table[ last() ]
+  
   return
     if( $data instance of element( table ) )
     then( $data )
