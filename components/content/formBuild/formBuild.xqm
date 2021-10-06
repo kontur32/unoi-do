@@ -2,20 +2,18 @@ module namespace formBuild = 'content/formBuild';
 
 declare function formBuild:main( $params ){
   let $data := $params?data
-  let $formFields :=
-    fetch:xml(
-      'http://localhost:9984/zapolnititul/api/v2/forms/' || $data/@templateID/data() || '/fields'
-    )/csv
+  let $formFields := $params?form/csv
+  let $formName := $params?form/@label/data()
   let $служебныеПоляФормы :=
     map{
       'aboutType' : 'https://schema.org/Person',
       'templateID' : $data/@templateID/data(),
       'containerID' : if( $data/@id/data() )then( $data/@id/data() )else( random:uuid() ),
-      'formName' : $params?formName
+      'formName' : $formName
     }
   return  
     map{
-      'форма' : formBuild:buildForm( $data, $params?formName, $formFields ),
+      'форма' : formBuild:buildForm( $data, $formName, $formFields ),
       'служебныеПоляФормы' : $params?_t( 'content/defaultFormField', $служебныеПоляФормы )
     }
 };

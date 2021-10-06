@@ -3,6 +3,7 @@ module namespace newUser = "newUser";
 import module namespace config = "app/config" at "../../lib/core/config.xqm";
 import module namespace getData = "getData" at '../../lib/modules/getData.xqm';
 import module namespace login = "login" at "login.xqm";
+import module namespace auth = "modules/auth" at "../../lib/modules/auth.xqm";
 import module namespace data = "data.save" at "data.save.xqm";
 
 declare 
@@ -42,7 +43,7 @@ function newUser:main( $email as xs:string, $password as xs:string, $redirect ){
 (: создает аккаунт пользователя на сервисе утентификации :)
 declare function newUser:createAuth( $username, $email, $password ){
   let $accessToken := 
-      getData:getToken( config:param( 'authHost' ), config:param( 'login' ), config:param( 'password' ) )
+      auth:getJWT( config:param( 'authHost' ), config:param( 'login' ), config:param( 'password' ) )
     let $auth := "Bearer " ||   $accessToken
     let $request := 
     <http:request method='POST'>

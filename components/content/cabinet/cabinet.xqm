@@ -1,36 +1,24 @@
 module namespace cabinet = 'content/cabinet';
 
 declare function cabinet:main( $params ){
-  let $userID :=
-    $params?_t( 'serviceFunctions/userID', map{} )/result/text() 
-  
-  let $templateID := 
-    tokenize( $params?_conf( 'моделиЛичногоКабинета' ), ',' )
-  
-  let $data1 := cabinet:getData( $params, $userID, $templateID[ 1 ] )
-  let $data2 := cabinet:getData( $params, $userID, $templateID[ 2 ] )
-  let $data3 := cabinet:getData( $params, $userID, $templateID[ 3 ] )
-  let $data4 := cabinet:getData( $params, $userID, $templateID[ 4 ] )
-  
-  let $основныеСведения :=
-      $params?_t( 'content/formBuild',  map{ 'data' : $data1, 'formName' : 'основныеСведения' } 
+  let $userID := session:get( 'userID' )  
+  let $templates :=
+    $params?_api(
+      'getForms.forms', map{ 'xq' : '.[ starts-with( @label, "ЛК:" ) ]' }
     )
+    /forms
   
-  let $формаЛичныхДанных := 
-    $params?_t( 'content/formBuild',  map{ 'data' : $data2, 'formName' : 'личныеДанные' } )
-  
-  let $формаОбразование :=
-    $params?_t( 'content/formBuild',  map{ 'data' : $data3, 'formName' : 'образование' } )
-  
-  let $формаМестоРаботы :=
-    $params?_t( 'content/formBuild',  map{ 'data' : $data4, 'formName' : 'местоРаботы' } )
-  
+  let $forms :=
+    for $i in $templates/form
+    let $data := cabinet:getData( $params, $userID, $i/@id/data() )  
+    return
+      $params?_t( 'content/formBuild',  map{ 'data' : $data, 'form' :  $i } )
   return
       map{
-        'основныеСведения' : $основныеСведения,
-        'личныеДанные' : $формаЛичныхДанных,
-        'образование' : $формаОбразование,
-        'местоРаботы' : $формаМестоРаботы
+        'основныеСведения' : $forms[ 1 ],
+        'личныеДанные' : $forms[ 2 ],
+        'образование' : $forms[ 3 ],
+        'местоРаботы' : $forms[ 4 ]
       }
 };
 

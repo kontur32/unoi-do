@@ -44,6 +44,7 @@ function oauth:main( $code as xs:string, $state as xs:string ){
         (
           session:set( 'accessToken', $userInfo?accessToken ),
           session:set( "login", $userEmail ),
+          session:set( "userID", $userInfo?userID ),
           session:set( "displayName", $userInfo?displayName ),
           session:set( 'userAvatarURL', $userInfo?avatar ),
           web:redirect( config:param( 'host' ) || config:param( 'rootPath' ) || '/u'  ) 
@@ -55,10 +56,18 @@ function oauth:main( $code as xs:string, $state as xs:string ){
 };
 
 declare function oauth:getUserMeta( $login ){
-    map{
+  let $userHash :=
+    lower-case(
+      string( xs:hexBinary( hash:md5( lower-case( $login ) ) ) )
+    )
+  let $userID := 
+    'http://dbx.iro37.ru/unoi/сущности/учащиеся#' || $userHash
+  return 
+   map{
       'displayName' : $login,
       'accessToken' : oauth:getToken( config:param( 'authHost' ), config:param( 'login' ), config:param( 'password' ) ),
-      'avatar' : config:param( 'defaultAvatarURL' )
+      'avatar' : config:param( 'defaultAvatarURL' ),
+      'userID': $userID
     }
 };
 

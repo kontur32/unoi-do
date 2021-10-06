@@ -12,34 +12,32 @@ declare
 function login:main( $login as xs:string, $password as xs:string, $redirect, $guest ){
   let $redir := 
     if( $redirect )then( $redirect )else( config:param( 'rootPath' ) || '/u'  )
+
+  let $user :=  login:getUserMeta( $login, $password )
   return
-  if(  $guest = "yes" )
-  then(
-    session:set( "login", 'guest' ),
-    session:set( "displayName", "Гость"),
-    session:set( "grants", "гость"),
-    web:redirect( $redir )
-  )
-  else(
-    let $user :=  login:getUserMeta( $login, $password )
-    return
-      if( not( $user?error )  )
-      then(
-        session:set( 'accessToken', $user?accessToken ),
-        session:set( "login", $login ),
-        session:set( "displayName", $user?displayName ),
-        session:set( 'userAvatarURL', $user?avatar ),
-        web:redirect( $redir ) 
-      )
-      else( web:redirect( config:param( 'rootPath' ) ) )
+    if( not( $user?error )  )
+    then(
+      session:set( 'accessToken', $user?accessToken ),
+      session:set( "login", $login ),
+      session:set( "displayName", $user?displayName ),
+      session:set( "userID", $user?userID ),
+      web:redirect( $redir ) 
     )
+    else( web:redirect( config:param( 'rootPath' ) ) )
 };
 
 declare function login:getUserMeta( $login, $password ){
-  map{
-    'displayName' : $login,
-    'accessToken' : login:getToken( config:param( 'authHost' ), config:param( 'login' ), config:param( 'password' ) ),
-    'avatar' : ''
+  let $userHash :=
+    lower-case(
+      string( xs:hexBinary( hash:md5( lower-case( $login ) ) ) )
+    )
+  let $userID := 
+    'http://dbx.iro37.ru/unoi/сущности/учащиеся#' || $userHash
+  return
+    map{
+      'displayName' : $login,
+      'accessToken' : login:getToken( config:param( 'authHost' ), config:param( 'login' ), config:param( 'password' ) ),
+      'userID' : $userID
   }
  
 };
