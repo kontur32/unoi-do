@@ -2,6 +2,7 @@ module namespace signUp = "signUp";
 
 import module namespace config = "app/config" at "../../lib/core/config.xqm";
 import module namespace getData = "getData" at '../../lib/modules/getData.xqm';
+import module namespace getForms = "modules/getForms" at '../../lib/modules/getForms.xqm';
 
 import module namespace template="template" at "../../lib/core/template.xqm";
 import module namespace dateTime = 'dateTime' at 'http://iro37.ru/res/repo/dateTime.xqm';
@@ -12,7 +13,9 @@ declare
   %rest:query-param( "redirect", "{ $redirect }", "/unoi/do/u/courses" )
   %rest:path( "/unoi/do/api/v01/user/signup/{$id}/{$date}" )
 function signUp:main( $id as xs:string, $date, $redirect ){
-  let $templateID := '7da6b3ba-961a-4147-9607-31e89b8deed8'
+  let $templateID :=
+      getForms:forms( '.[ starts-with( @label, "Учащийся: заявки на КПК" ) ]', map{} )
+      /forms/form/@id/data()
   let $идентификаторСлушателяКПК := session:get( 'userID' )
   let $идентификаторЗаявки :=
     'http://dbx.iro37.ru/unoi/сущности/заявкиНаКПК#' || random:uuid()
