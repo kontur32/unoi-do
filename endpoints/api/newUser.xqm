@@ -11,7 +11,7 @@ declare
   %rest:query-param( "https://schema.org/email", "{ $email }" )
   %rest:query-param( "password", "{ $password }" )
   %rest:query-param( "redirect", "{ $redirect }" )
-  %rest:path( "/unoi/do/api/v01/user" )
+  %rest:path( "/unoi/do/api/v01/p/user" )
 function newUser:main( $email as xs:string, $password as xs:string, $redirect ){
   
   let $response := 

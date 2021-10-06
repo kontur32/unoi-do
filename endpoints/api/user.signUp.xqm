@@ -11,7 +11,7 @@ import module namespace data = "data.save" at "data.save.xqm";
 declare 
   %rest:GET
   %rest:query-param( "redirect", "{ $redirect }", "/unoi/do/u/courses" )
-  %rest:path( "/unoi/do/api/v01/user/signup/{$id}/{$date}" )
+  %rest:path( "/unoi/do/api/v01/u/courses/signup/{$id}/{$date}" )
 function signUp:main( $id as xs:string, $date, $redirect ){
   let $templateID :=
       getForms:forms( '.[ starts-with( @label, "Учащийся: заявки на КПК" ) ]', map{} )
