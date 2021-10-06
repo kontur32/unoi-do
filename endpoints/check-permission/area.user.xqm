@@ -10,7 +10,7 @@ function check:userArea(){
 };
 
 declare 
-  %perm:check( "/unoi/do/api/v01/user" )
+  %perm:check( "/unoi/do/api/v01/user2" )
 function check:apiArea(){
   let $user := session:get( "login" )
   where empty( $user )

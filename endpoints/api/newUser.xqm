@@ -33,11 +33,7 @@ function newUser:main( $email as xs:string, $password as xs:string, $redirect ){
         newUser:создатьПользователяМудл( $поляАккаунтаМудл )
       )
     )
-    else(
-      login:main( $email, $password, (), () ),
-      newUser:записьЛичномКабинете( $email ),
-      newUser:создатьПользователяМудл( $поляАккаунтаМудл )
-    )
+    else( <err:SignUp>ошибка регистрации пользователя</err:SignUp>)
 };
 
 (: создает аккаунт пользователя на сервисе утентификации :)
