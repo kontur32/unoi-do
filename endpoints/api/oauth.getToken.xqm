@@ -40,6 +40,12 @@ function oauth:main( $code as xs:string, $state as xs:string ){
     if( $userEmail )
     then(
       let $userInfo:= oauth:getUserMeta( $userEmail )
+      let $redir := 
+              if( session:get( 'loginURL' ) )
+              then( session:get( 'loginURL' ), session:delete( 'loginURL' ) )
+              else(
+                config:param( 'host' ) || config:param( 'rootPath' ) || '/u'  
+              )
       return
         (
           session:set( 'accessToken', $userInfo?accessToken ),
@@ -47,7 +53,7 @@ function oauth:main( $code as xs:string, $state as xs:string ){
           session:set( "userID", $userInfo?userID ),
           session:set( "displayName", $userInfo?displayName ),
           session:set( 'userAvatarURL', $userInfo?avatar ),
-          web:redirect( config:param( 'host' ) || config:param( 'rootPath' ) || '/u'  ) 
+          web:redirect( $redir )
         )
     )
     else(

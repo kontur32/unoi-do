@@ -5,6 +5,7 @@ declare function views:main( $params as map(*) ){
        map{
         'header' : '',
         'content' : (
+          
           $params?_t( 'login', map{ 'redirect' :  $params?_conf( 'rootPath' ) || '/u' } ),
           $params?_t( 'registration', map{ 'redirect' :  $params?_conf( 'rootPath' ) || '/u' } )
         ),

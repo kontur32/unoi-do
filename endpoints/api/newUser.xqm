@@ -2,6 +2,7 @@ module namespace newUser = "newUser";
 
 import module namespace config = "app/config" at "../../lib/core/config.xqm";
 import module namespace getData = "getData" at '../../lib/modules/getData.xqm';
+import module namespace getForms = "modules/getForms" at '../../lib/modules/getForms.xqm';
 import module namespace login = "login" at "login.xqm";
 import module namespace auth = "modules/auth" at "../../lib/modules/auth.xqm";
 import module namespace data = "data.save" at "data.save.xqm";
@@ -76,8 +77,11 @@ declare function newUser:записьЛичномКабинете( $userLogin ){
       )
   let $newUserID := 
     'http://dbx.iro37.ru/unoi/сущности/учащиеся#' || $userHash
+  
   let $templateID :=
-    tokenize( config:param( 'моделиЛичногоКабинета' ), ',' )[ 1 ]
+    getForms:forms( '.[ starts-with( @label, "ЛК: Карточка учащегося" ) ]', map{} )
+      /forms/form/@id/data()
+  
   let $modelURL :=
     'http://localhost:9984/zapolnititul/api/v2/forms/' || $templateID || '/model'
   let $dataRecord :=

@@ -15,5 +15,9 @@ function check:apiArea(){
   let $user := session:get( "login" )
   where empty( $user )
   return
-    web:redirect( "/unoi/do" )
+    (
+      session:set( 'loginURL', request:uri() ),
+      session:set( 'loginMessage', 'Для записи на курс войдите с помощью своей учетной записи' ),
+      web:redirect( "/unoi/do" )
+    )
 };

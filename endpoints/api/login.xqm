@@ -11,7 +11,12 @@ declare
   %rest:path( "/unoi/do/api/v01/login" )
 function login:main( $login as xs:string, $password as xs:string, $redirect, $guest ){
   let $redir := 
-    if( $redirect )then( $redirect )else( config:param( 'rootPath' ) || '/u'  )
+    if( session:get( 'loginURL' ) )
+    then( session:get( 'loginURL' ), session:delete( 'loginURL' ) )
+    else(
+      if( $redirect )then( $redirect )else( config:param( 'rootPath' ) || '/u'  )
+    )
+    
 
   let $user :=  login:getUserMeta( $login, $password )
   return
