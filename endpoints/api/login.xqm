@@ -7,7 +7,7 @@ declare
   %rest:query-param( "login", "{ $login }", "guest" )
   %rest:query-param( "password", "{ $password }" )
   %rest:query-param( "redirect", "{ $redirect }" )
-   %rest:query-param( "guest", "{ $guest }" )
+  %rest:query-param( "guest", "{ $guest }" )
   %rest:path( "/unoi/do/api/v01/login" )
 function login:main( $login as xs:string, $password as xs:string, $redirect, $guest ){
   let $redir := 
@@ -16,7 +16,6 @@ function login:main( $login as xs:string, $password as xs:string, $redirect, $gu
     else(
       if( $redirect )then( $redirect )else( config:param( 'rootPath' ) || '/u'  )
     )
-    
 
   let $user :=  login:getUserMeta( $login, $password )
   return
@@ -44,7 +43,6 @@ declare function login:getUserMeta( $login, $password ){
       'accessToken' : login:getToken( config:param( 'authHost' ), config:param( 'login' ), config:param( 'password' ) ),
       'userID' : $userID
   }
- 
 };
 
 declare

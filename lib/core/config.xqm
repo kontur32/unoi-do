@@ -5,7 +5,10 @@ declare  function config:param( $param as xs:string ) as xs:string* {
 };
 
 declare function config:log( $path, $items ){
-  file:write(
-    config:param( 'logDir' ) || $path, <log>{ $items }</log>
+  (
+      file:write(
+      config:param( 'logDir' ) || $path, <log>{ $items }</log>
+    ),
+    $items
   )
 };

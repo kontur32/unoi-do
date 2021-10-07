@@ -28,6 +28,7 @@ function oauth:main( $code as xs:string, $state as xs:string ){
         'http://portal.titul24.ru/oauth/token'
     )[ 2 ]
   let $accessToken := $response/json/access__token/text()
+  
   let $userInfo :=
     json:parse(
       fetch:text( 
@@ -36,10 +37,11 @@ function oauth:main( $code as xs:string, $state as xs:string ){
     )
 
   let $userEmail := $userInfo//user__email/text()
+  let $userAuthID := $userInfo//ID/text() (: идентификатор на сервере авторизации :)
   return
     if( $userEmail )
     then(
-      let $userInfo:= oauth:getUserMeta( $userEmail )
+      let $userMeta:= oauth:getUserMeta( $userEmail )
       let $redir := 
               if( session:get( 'loginURL' ) )
               then( session:get( 'loginURL' ), session:delete( 'loginURL' ) )
@@ -48,11 +50,12 @@ function oauth:main( $code as xs:string, $state as xs:string ){
               )
       return
         (
-          session:set( 'accessToken', $userInfo?accessToken ),
+          session:set( 'userAuthID', $userAuthID ),
+          session:set( 'accessToken', $userMeta?accessToken ),
           session:set( "login", $userEmail ),
-          session:set( "userID", $userInfo?userID ),
-          session:set( "displayName", $userInfo?displayName ),
-          session:set( 'userAvatarURL', $userInfo?avatar ),
+          session:set( "userID", $userMeta?userID ),
+          session:set( "displayName", $userMeta?displayName ),
+          session:set( 'userAvatarURL', $userMeta?avatar ),
           web:redirect( $redir )
         )
     )

@@ -7,9 +7,16 @@ declare
   %rest:query-param( "redirect", "{ $redirect }" )
   %rest:path( "/unoi/do/api/v01/logout" )
 function logout:main( $redirect ){
-  session:close(),
+  let $sessionAuthDestroy :=
+    fetch:text(
+      config:param( 'authHost' ) || 
+      '/sessionDestroy/?user='  || 
+      session:get( 'userAuthID' )
+    )   
+  return
+    if( $sessionAuthDestroy )then( session:close() )else(),
   let $redir := 
     if( $redirect )then( $redirect )else( config:param( 'rootPath' )  )
-  return 
-    web:redirect( $redir )
+  return  
+      web:redirect( $redir )
 };
