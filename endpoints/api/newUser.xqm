@@ -20,8 +20,12 @@ function newUser:main( $email as xs:string, $password as xs:string, $redirect ){
   let $поляАккаунтаМудл :=
     map{
       'users[0][username]' : $email,
-      'users[0][lastname]' : request:parameter( 'https://schema.org/familyName' ),
-      'users[0][firstname]' : request:parameter( 'https://schema.org/givenName' ),
+      'users[0][lastname]' : 
+        request:parameter('https://schema.org/familyName')
+        ??request:parameter('https://schema.org/familyName')!!"Doe",
+      'users[0][firstname]' :
+        request:parameter('https://schema.org/givenName')
+        ??request:parameter('https://schema.org/givenName')!!"John",
       'users[0][email]' : $email,
       'users[0][password]' : $password
     }
