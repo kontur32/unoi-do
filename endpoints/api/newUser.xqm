@@ -15,54 +15,49 @@ declare
   %rest:path( "/unoi/do/api/v01/p/user" )
 function newUser:main( $email as xs:string, $password as xs:string, $redirect ){
   
-  let $response := 
-    newUser:createAuth( $email, $email, $password )
+  let $response := newUser:createAuth($email, $email, $password)
   let $поляАккаунтаМудл :=
     map{
       'users[0][username]' : $email,
-      'users[0][lastname]' : 
-        request:parameter('https://schema.org/familyName')
-        ??request:parameter('https://schema.org/familyName')!!"Doe",
-      'users[0][firstname]' :
-        request:parameter('https://schema.org/givenName')
-        ??request:parameter('https://schema.org/givenName')!!"John",
+      'users[0][lastname]' : request:parameter('https://schema.org/familyName'),
+      'users[0][firstname]' : request:parameter('https://schema.org/givenName') ,
       'users[0][email]' : $email,
       'users[0][password]' : $password
     }
   return
-    if ( $response[ 1 ]/@status/data() = "201" )
+    if ($response[1]/@status/data() = "201")
     then(
       (
-        login:main( $email, $password, (), () ),
-        newUser:записьЛичномКабинете( $email ),
-        newUser:создатьПользователяМудл( $поляАккаунтаМудл )
+        login:main($email, $password, (), ()),
+        newUser:записьЛичномКабинете($email),
+        newUser:создатьПользователяМудл($поляАккаунтаМудл)
       )
     )
-    else( <err:SignUp>ошибка регистрации пользователя</err:SignUp>)
+    else(<err:SignUp>ошибка регистрации пользователя</err:SignUp>)
 };
 
 (: создает аккаунт пользователя на сервисе утентификации :)
 declare function newUser:createAuth( $username, $email, $password ){
   let $accessToken := 
-      auth:getJWT( config:param( 'authHost' ), config:param( 'login' ), config:param( 'password' ) )
-    let $auth := "Bearer " ||   $accessToken
+      auth:getJWT(config:param('authHost'), config:param('login'), config:param('password'))
+    let $auth := "Bearer " || $accessToken
     let $request := 
     <http:request method='POST'>
-        <http:header name="Authorization" value= '{ $auth }'/>
+        <http:header name="Authorization" value= '{$auth}'/>
         <http:multipart media-type = "multipart/form-data" >
             <http:header name="Content-Disposition" value= 'form-data; name="username";'/>
-            <http:body media-type = "text/plain" >{ $username }</http:body>
+            <http:body media-type = "text/plain" >{$username}</http:body>
             <http:header name="Content-Disposition" value= 'form-data; name="email";'/>
-            <http:body media-type = "text/plain" >{ $email }</http:body>
+            <http:body media-type = "text/plain" >{$email}</http:body>
             <http:header name="Content-Disposition" value= 'form-data; name="password";' />
-            <http:body media-type = "text/plain">{ $password }</http:body>
+            <http:body media-type = "text/plain">{$password}</http:body>
         </http:multipart> 
       </http:request>
   
   let $response := 
       http:send-request(
         $request,
-        config:param( 'authHost' ) || "/wp-json/wp/v2/users"
+        config:param('authHost') || "/wp-json/wp/v2/users"
     )
   return
     $response
@@ -83,24 +78,24 @@ declare function newUser:записьЛичномКабинете( $userLogin ){
     'http://dbx.iro37.ru/unoi/сущности/учащиеся#' || $userHash
   
   let $templateID :=
-    getForms:forms( '.[ starts-with( @label, "ЛК: Карточка учащегося" ) ]', map{} )
+    getForms:forms('.[starts-with(@label, "ЛК: Карточка учащегося")]', map{})
       /forms/form/@id/data()
   
   let $modelURL :=
     'http://localhost:9984/zapolnititul/api/v2/forms/' || $templateID || '/model'
   let $dataRecord :=
     <table
-        id = "{ random:uuid() }"
-        label = "{ $userLogin }"
+        id = "{random:uuid()}"
+        label = "{$userLogin}"
         aboutType = "https://schema.org/Person" 
-        templateID = "{ $templateID }" 
+        templateID = "{$templateID}" 
         userID = "220" 
-        modelURL = "{ $modelURL }"
+        modelURL = "{$modelURL}"
         status = "active"
-        updated="{ current-dateTime() }">
-        <row id = "{ $newUserID }" aboutType = "https://schema.org/Person">
-          <cell id="https://schema.org/email">{ request:parameter( 'https://schema.org/email' ) }</cell>
-          <cell id="https://schema.org/givenName">{ request:parameter( 'https://schema.org/givenName' ) }</cell>
+        updated="{current-dateTime()}">
+        <row id = "{$newUserID}" aboutType = "https://schema.org/Person">
+          <cell id="https://schema.org/email">{request:parameter('https://schema.org/email')}</cell>
+          <cell id="https://schema.org/givenName">{request:parameter( 'https://schema.org/givenName' ) }</cell>
           <cell id="id">{ $newUserID }</cell>
           <cell id="https://schema.org/familyName">{ request:parameter( 'https://schema.org/familyName' ) }</cell>
           <cell id="https://schema.org/telephone">{ request:parameter( 'https://schema.org/telephone' ) }</cell>
@@ -110,8 +105,8 @@ declare function newUser:записьЛичномКабинете( $userLogin ){
   let $response :=
     data:postRecord(
       $dataRecord,
-      config:param( 'api.method.getData' ),
-      session:get( "accessToken")
+      config:param('api.method.getData'),
+      session:get("accessToken")
     )
   return
     $response
@@ -119,32 +114,32 @@ declare function newUser:записьЛичномКабинете( $userLogin ){
 
 declare function newUser:создатьПользователяМудл( $поляПользователя ){
   let $token :=
-  json:parse(
-    fetch:text(
-      web:create-url(
-        config:param('moodle.method.token.get'),
-        map{
-          'username' :  config:param('moodle.login'),
-          'password' : config:param('moodle.password'),
-          'service' : 'trac'
-        }
-      )
-    )
-  )/json/token/text()
-return
-  fetch:xml(
-      web:create-url(
-        config:param('moodle.method.user.create'),
-        map:merge(
-          (
-            map{
-              'wstoken' : $token,
-              'wsfunction' : 'core_user_create_users'
-            },
-            $поляПользователя
-          )
+    json:parse(
+      fetch:text(
+        web:create-url(
+          config:param('moodle.method.token.get'),
+          map{
+            'username' :  config:param('moodle.login'),
+            'password' : config:param('moodle.password'),
+            'service' : 'trac'
+          }
         )
-        
       )
-    )//KEY[ @name = "id"]/VALUE/text()
+    )/json/token/text()
+  return
+    fetch:xml(
+        web:create-url(
+          config:param('moodle.method.user.create'),
+          map:merge(
+            (
+              map{
+                'wstoken' : $token,
+                'wsfunction' : 'core_user_create_users'
+              },
+              $поляПользователя
+            )
+          )
+          
+        )
+      )//KEY[@name = "id"]/VALUE/text()
 };
