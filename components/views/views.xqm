@@ -1,17 +1,17 @@
 module namespace views = "views";
 
 declare function views:main( $params as map(*) ){
-  let $p :=    
+  let $redirect := $params?_conf('rootPath') || '/u'
+  let $page :=    
        map{
         'header' : '',
         'content' : (
-          
-          $params?_t( 'login', map{ 'redirect' :  $params?_conf( 'rootPath' ) || '/u' } ),
-          $params?_t( 'registration', map{ 'redirect' :  $params?_conf( 'rootPath' ) || '/u' } )
+          $params?_t('login', map{'redirect':$redirect}),
+          $params?_t('registration', map{'redirect':$redirect})
         ),
-        'footer' : $params?_t( 'footer', map{} )
+        'footer' : $params?_t('footer', map{})
       }
     
   return
-    map{ 'содержание' : $params?_t( 'main', $p ) }
+    map{'содержание' : $params?_t('main',$page)}
 };

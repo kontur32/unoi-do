@@ -1,12 +1,14 @@
 module namespace check = "check";
 
+import module namespace config = "app/config" at "../../lib/core/config.xqm";
+
 declare 
-  %perm:check( "/unoi/do/u" )
+  %perm:check("/unoi/do/u")
 function check:userArea(){
-  let $user := session:get( "login" )
-  where empty( $user )
+  let $user := session:get("login")
+  where empty($user) and not(config:param('mode')='noLogin')
   return
-    web:redirect( "/unoi/do" )
+    web:redirect("/unoi/do")
 };
 
 declare 
