@@ -27,11 +27,10 @@ function newUser:main($email as xs:string){
     then(
       (
         newUser:sendPassword($response//id/text(), $password),
+        (:login:main($email, $password, ()),:)
         newUser:записьЛичномКабинете($email),
-        newUser:создатьПользователяМудл($поляАккаунтаМудл)
-        (:,
-          login:main($email, $password, (), ())
-        :)
+        newUser:создатьПользователяМудл($поляАккаунтаМудл),
+        web:redirect(config:param('rootPath'))
       )
     )
     else(<err:SignUp>ошибка регистрации пользователя</err:SignUp>)
