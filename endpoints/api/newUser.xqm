@@ -12,7 +12,7 @@ declare
   %rest:query-param("https://schema.org/email", "{$email}")
   %rest:path("/unoi/do/api/v01/p/user")
 function newUser:main($email as xs:string){
-  let $password := 'Ivanovo2020'
+  let $password := substring-before(random:uuid(),'-')
   let $response := newUser:createAuth($email, $email, $password)
   let $поляАккаунтаМудл :=
     map{
@@ -26,11 +26,12 @@ function newUser:main($email as xs:string){
     if ($response[1]/@status/data() = "201")
     then(
       (
-        newUser:sendPassword($response//id/text(), $password)
+        newUser:sendPassword($response//id/text(), $password)[2]
         (:,
         login:main($email, $password, ()):),
         newUser:записьЛичномКабинете($email),
-        newUser:создатьПользователяМудл($поляАккаунтаМудл)
+        newUser:создатьПользователяМудл($поляАккаунтаМудл),
+        web:redirect(config:param('rootPath'))
       )
     )
     else(<err:SignUp>ошибка регистрации пользователя</err:SignUp>)
