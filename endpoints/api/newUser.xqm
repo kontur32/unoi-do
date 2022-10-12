@@ -26,11 +26,13 @@ function newUser:main($email as xs:string){
     if ($response[1]/@status/data() = "201" and newUser:sendPassword($response//id/text(), $password) !='')
     then(
       (
-        web:create-url(
-          web:redirect(config:param('rootPath')),
-          map{
-            'loginMessage':'Вы успешно зарегистрированы. Пароль направленн на Вашу почту: ' || $email
-          }
+        web:redirect(
+          web:create-url(
+            config:param('rootPath'),
+            map{
+              'loginMessage':'Вы успешно зарегистрированы. Пароль направленн на Вашу почту: ' || $email
+            }
+          )
         ),
         newUser:записьЛичномКабинете($email),
         newUser:создатьПользователяМудл($поляАккаунтаМудл)
