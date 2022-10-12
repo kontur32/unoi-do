@@ -28,10 +28,9 @@ function newUser:main($email as xs:string){
       (
         newUser:sendPassword($response//id/text(), $password)
         (:,
-        login:main($email, $password, ()),
+        login:main($email, $password, ()):),
         newUser:записьЛичномКабинете($email),
         newUser:создатьПользователяМудл($поляАккаунтаМудл)
-        :)
       )
     )
     else(<err:SignUp>ошибка регистрации пользователя</err:SignUp>)
@@ -121,7 +120,11 @@ declare function newUser:записьЛичномКабинете( $userLogin ){
     data:postRecord(
       $dataRecord,
       config:param('api.method.getData'),
-      session:get("accessToken")
+      login:getToken(
+        config:param('authHost'),
+        config:param('login'),
+        config:param('password')
+      )
     )
   return
     $response

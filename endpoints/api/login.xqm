@@ -45,7 +45,7 @@ declare function login:getUserMeta( $login, $password ){
 };
 
 declare
-  %private
+  %public
 function login:getToken( $host, $username, $password ) as xs:string*
 {
   let $request := 
