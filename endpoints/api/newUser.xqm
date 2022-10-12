@@ -26,9 +26,9 @@ function newUser:main($email as xs:string){
     if ($response[1]/@status/data() = "201" and newUser:sendPassword($response//id/text(), $password) !='')
     then(
       (
+        web:redirect(config:param('rootPath')),
         newUser:записьЛичномКабинете($email),
-        newUser:создатьПользователяМудл($поляАккаунтаМудл),
-        web:redirect(config:param('rootPath'))
+        newUser:создатьПользователяМудл($поляАккаунтаМудл)
       )
     )
     else(<err:SignUp>ошибка регистрации пользователя</err:SignUp>)
