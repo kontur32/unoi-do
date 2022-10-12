@@ -26,7 +26,7 @@ function newUser:main($email as xs:string){
     if ($response[1]/@status/data() = "201")
     then(
       (
-        newUser:sendPassword($response//id/text(), $password),
+        newUser:sendPassword($response//id/text(), $password)[2],
         login:main($email, $password, ()),
         newUser:записьЛичномКабинете($email),
         newUser:создатьПользователяМудл($поляАккаунтаМудл)
@@ -38,18 +38,15 @@ function newUser:main($email as xs:string){
 
 (: отправляет пароль на почту новому пользователю :)
 declare function newUser:sendPassword($userID, $password){
-  let $request := 
-    fetch:text(
-      web:create-url(
-        'https://portal.titul24.ru/sendmail',
-        map{
-          'user':$userID,
-          'password':$password
-        }
-      )
+  fetch:text(
+    web:create-url(
+      'https://portal.titul24.ru/sendmail',
+      map{
+        'user':$userID,
+        'password':$password
+      }
     )
-  return
-    ()
+  )
 };
 
 (: создает аккаунт пользователя на сервисе утентификации :)
