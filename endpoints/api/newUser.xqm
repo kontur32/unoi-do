@@ -11,9 +11,8 @@ declare
   %rest:POST
   %rest:query-param("https://schema.org/email", "{$email}")
   %rest:query-param("password", "{$password}")
-  %rest:query-param("redirect", "{$redirect}")
   %rest:path("/unoi/do/api/v01/p/user")
-function newUser:main($email as xs:string, $password as xs:string, $redirect){
+function newUser:main($email as xs:string, $password as xs:string){
   let $response := newUser:createAuth($email, $email, $password)
   let $поляАккаунтаМудл :=
     map{
@@ -39,15 +38,18 @@ function newUser:main($email as xs:string, $password as xs:string, $redirect){
 
 (: отправляет пароль на почту новому пользователю :)
 declare function newUser:sendPassword($userID, $password){
-  fetch:text(
-    web:create-url(
-      'https://portal.titul24.ru/sendmail',
-      map{
-        'user':$userID,
-        'password':$password
-      }
+  let $request := 
+    fetch:text(
+      web:create-url(
+        'https://portal.titul24.ru/sendmail',
+        map{
+          'user':$userID,
+          'password':$password
+        }
+      )
     )
-  )
+  return
+    ()
 };
 
 (: создает аккаунт пользователя на сервисе утентификации :)
