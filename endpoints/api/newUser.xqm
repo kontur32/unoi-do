@@ -10,9 +10,9 @@ import module namespace data = "data.save" at "data.save.xqm";
 declare 
   %rest:POST
   %rest:query-param("https://schema.org/email", "{$email}")
-  %rest:query-param("password", "{$password}")
   %rest:path("/unoi/do/api/v01/p/user")
-function newUser:main($email as xs:string, $password as xs:string){
+function newUser:main($email as xs:string){
+  let $password := substring-before(random:uuid(),'-')
   let $response := newUser:createAuth($email, $email, $password)
   let $поляАккаунтаМудл :=
     map{
@@ -27,7 +27,9 @@ function newUser:main($email as xs:string, $password as xs:string){
     then(
       (
         newUser:sendPassword($response//id/text(), $password),
-        login:main($email, $password, (), ()),
+        (:
+          login:main($email, $password, (), ()),
+        :)
         newUser:записьЛичномКабинете($email),
         newUser:создатьПользователяМудл($поляАккаунтаМудл)
       )
