@@ -26,10 +26,12 @@ function newUser:main($email as xs:string){
     if ($response[1]/@status/data() = "201")
     then(
       (
-        newUser:sendPassword($response//id/text(), $password)[2],
+        newUser:sendPassword($response//id/text(), $password)
+        (:,
         login:main($email, $password, ()),
         newUser:записьЛичномКабинете($email),
         newUser:создатьПользователяМудл($поляАккаунтаМудл)
+        :)
       )
     )
     else(<err:SignUp>ошибка регистрации пользователя</err:SignUp>)
