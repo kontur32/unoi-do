@@ -28,8 +28,10 @@ function newUser:main($email as xs:string){
       (
         newUser:sendPassword($response//id/text(), $password),
         newUser:записьЛичномКабинете($email),
-        newUser:создатьПользователяМудл($поляАккаунтаМудл),
-        login:main($email, $password, (), ())
+        newUser:создатьПользователяМудл($поляАккаунтаМудл)
+        (:,
+          login:main($email, $password, (), ())
+        :)
       )
     )
     else(<err:SignUp>ошибка регистрации пользователя</err:SignUp>)
