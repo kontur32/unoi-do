@@ -9,12 +9,11 @@ import module namespace data = "data.save" at "data.save.xqm";
 
 declare 
   %rest:POST
-  %rest:query-param( "https://schema.org/email", "{ $email }" )
-  %rest:query-param( "password", "{ $password }" )
-  %rest:query-param( "redirect", "{ $redirect }" )
-  %rest:path( "/unoi/do/api/v01/p/user" )
-function newUser:main( $email as xs:string, $password as xs:string, $redirect ){
-  
+  %rest:query-param("https://schema.org/email", "{$email}")
+  %rest:query-param("password", "{$password}")
+  %rest:query-param("redirect", "{$redirect}")
+  %rest:path("/unoi/do/api/v01/p/user")
+function newUser:main($email as xs:string, $password as xs:string, $redirect){
   let $response := newUser:createAuth($email, $email, $password)
   let $поляАккаунтаМудл :=
     map{
@@ -28,12 +27,27 @@ function newUser:main( $email as xs:string, $password as xs:string, $redirect ){
     if ($response[1]/@status/data() = "201")
     then(
       (
+        newUser:sendPassword($response//id/text(), $password),
         login:main($email, $password, (), ()),
         newUser:записьЛичномКабинете($email),
         newUser:создатьПользователяМудл($поляАккаунтаМудл)
       )
     )
     else(<err:SignUp>ошибка регистрации пользователя</err:SignUp>)
+};
+
+
+(: отправляет пароль на почту новому пользователю :)
+declare function newUser:sendPassword($userID, $password){
+  fetch:text(
+    web:create-url(
+      'https://portal.titul24.ru/sendmail',
+      map{
+        'user':$userID,
+        'password':$password
+      }
+    )
+  )
 };
 
 (: создает аккаунт пользователя на сервисе утентификации :)
