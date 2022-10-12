@@ -23,12 +23,9 @@ function newUser:main($email as xs:string){
       'users[0][password]' : $password
     }
   return
-    if ($response[1]/@status/data() = "201")
+    if ($response[1]/@status/data() = "201" and newUser:sendPassword($response//id/text(), $password) !='')
     then(
       (
-        newUser:sendPassword($response//id/text(), $password)[2]
-        (:,
-        login:main($email, $password, ()):),
         newUser:записьЛичномКабинете($email),
         newUser:создатьПользователяМудл($поляАккаунтаМудл),
         web:redirect(config:param('rootPath'))
