@@ -7,7 +7,6 @@ declare
   %rest:query-param( "login", "{ $login }", "guest" )
   %rest:query-param( "password", "{ $password }" )
   %rest:query-param( "redirect", "{ $redirect }" )
-  %rest:query-param( "guest", "{ $guest }" )
   %rest:path( "/unoi/do/api/v01/login" )
 function login:main($login as xs:string, $password as xs:string, $redirect){
   let $redir := 
