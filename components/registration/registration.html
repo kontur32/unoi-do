@@ -2,40 +2,25 @@
     <div class="col-sm-3"/>
     <div class="col-sm-6">
         <div class="text-center">или зарегистрируйтесь...</div>
-        <form class="card shadow rounded p-4 m-4" id="registration">
+        <form class="card shadow rounded p-4 m-4" id="registration" role="form" data-toggle="validator">
             <div class="form-group">
                 <label for="">Регистрация</label>
-                <input type="text" name="https://schema.org/email" id="" class="form-control" placeholder="user@example.com" aria-describedby="helpId"/>
+                <input type="email" name="https://schema.org/email" id="email" class="form-control" placeholder="user@example.com" aria-describedby="helpId" data-error="Укажите свою электронную почту в формате user@example.com"  required="yes"/>
                 <small id="helpId" class="text-muted">Электронная почта</small>
+                <!-- Error -->
+                <div class="help-block with-errors"></div>
             </div>
             
-            <!--  
             <div class="form-group">
-                <label for="">Фамилия</label>
-                <input type="text" name="https://schema.org/familyName" id="" class="form-control" placeholder="Фамилия" aria-describedby="helpId"/>
-                <small id="helpId" class="text-muted">Фамилия</small>
+              <div class="form-check-inline">
+                <label class="form-check-label" for="confirm-yes">
+                  <input type="radio" class="form-check-input" id="confirm-yes" name="confirm" data-error="Для регистрации необходимо Ваше согласие на обработку персональных данных" value="yes" required="yes"/>Да - Ваше согласие на обработку персональных данных
+                </label>
+              </div>
+              <!-- Error -->
+              <div class="help-block with-errors"></div>
             </div>
-            <div class="form-group">
-                <label for="">Имя</label>
-                <input type="text" name="https://schema.org/givenName" id="" class="form-control" placeholder="Имя" aria-describedby="helpId"/>
-                <small id="helpId" class="text-muted">Имя</small>
-            </div>
-            <div class="form-group">
-                <label for="">Телефон</label>
-                <input type="text" name="https://schema.org/telephone" id="" class="form-control" placeholder="+79908886699" aria-describedby="helpId"/>
-                <small id="helpId" class="text-muted">Телефон</small>
-            </div>            
-            <div class="form-group">
-                <label for="">Пароль</label>
-                <input type="password" name="password" id="" class="form-control" placeholder="password" aria-describedby="helpId"/>
-                <small id="helpId" class="text-muted">Введите пароль</small>
-            </div>
-            <div class="form-group">
-                <label for="">Повторите пароль</label>
-                <input type="password" name="password-2" id="" class="form-control" placeholder="password" aria-describedby="helpId"/>
-                <small id="helpId" class="text-muted">Повторите пароль</small>
-            </div>
-             -->
+                        
             <input type="text" name="redirect" value = "{{redirect}}" style = "display: none"/>
             <button class="btn btn-info" form="registration" type="submit" formmethod="POST" enctype = "multipart/form-data" formaction= "/unoi/do/api/v01/p/user">Зарегистрироваться</button>
         </form>
