@@ -14,16 +14,12 @@ declare
 function newUser:main($email as xs:string){
   let $password := substring-before(random:uuid(),'-')
   let $response := newUser:createAuth($email, $email, $password)
-  let $поляАккаунтаМудл :=
-    map{
-      'users[0][username]' : $email,
-      'users[0][lastname]' : request:parameter('https://schema.org/familyName'),
-      'users[0][firstname]' : request:parameter('https://schema.org/givenName') ,
-      'users[0][email]' : $email,
-      'users[0][password]' : $password
-    }
+  let $поляАккаунтаМудл := newUser:moodleUserFields($email, $password)
   return
-    if ($response[1]/@status/data() = "201" and newUser:sendPassword($response//id/text(), $password) !='')
+    if(
+      $response[1]/@status/data() = "201" and 
+      newUser:sendPassword($response//id/text(), $password) !=''
+    )
     then(
       (
         session:set(
@@ -38,6 +34,17 @@ function newUser:main($email as xs:string){
     else(<err:SignUp>ошибка регистрации пользователя</err:SignUp>)
 };
 
+
+(: формирует параметры для создания пользователя в Мудл:)
+declare function newUser:moodleUserFields($email, $password){
+  map{
+      'users[0][username]' : $email,
+      'users[0][lastname]' : request:parameter('https://schema.org/familyName'),
+      'users[0][firstname]' : request:parameter('https://schema.org/givenName') ,
+      'users[0][email]' : $email,
+      'users[0][password]' : $password
+    }
+};
 
 (: отправляет пароль на почту новому пользователю :)
 declare function newUser:sendPassword($userID, $password){
