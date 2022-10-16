@@ -1,7 +1,7 @@
 module namespace getData = "getData";
 
 import module namespace config = "app/config" at "../core/config.xqm";
-import module namespace auth = "modules/auth" at "auth.xqm";
+import module namespace auth = "lib/modules/auth" at "auth.xqm";
 
 declare
   %public

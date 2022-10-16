@@ -1,6 +1,7 @@
 module namespace oauth = "oaut/getToken/titul24";
 
 import module namespace config = "app/config" at "../../lib/core/config.xqm";
+import module namespace auth = "lib/modules/auth" at "../../lib/modules/auth.xqm";
 
 declare 
   %rest:GET
@@ -49,7 +50,7 @@ declare
   %rest:path("/unoi/do/api/v01/oauthGetToken/yandexID")
 function oauth:yandexID($code as xs:string, $state as xs:string){
   let $accessToken := 
-    oauth:getAuthToken(
+    auth:getAuthToken(
       'https://oauth.yandex.ru/token',
       '6e24a6e883ea4413b947d31c73d340d4',
       '96c2c9faf9574a89a3bea5e99d4c7c69',
@@ -90,7 +91,7 @@ declare
   %private
 function oauth:main($code as xs:string, $state as xs:string){
   let $accessToken :=
-    oauth:getAuthToken(
+    auth:getAuthToken(
       config:param('OAuthTokenEndpoint'),
       config:param('OAuthClienID'),
       config:param('OAuthClienSecret'),
@@ -107,9 +108,6 @@ function oauth:main($code as xs:string, $state as xs:string){
     )
     else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
 };
-
-
-
 
 (: генерирует редирект URL после успешной авторизации :)
 declare
@@ -138,35 +136,6 @@ function oauth:userInfo(
   )
 };
 
-(: получает access token для пользователя на сервисе аутентификации :)
-declare
-  %private
-function oauth:getAuthToken(
-  $tokenEndPoint as xs:string,
-  $OAuthClienID as xs:string,
-  $OAuthClienSecret as xs:string,
-  $code as xs:string
-)
-{
-  let $request := 
-    <http:request method='post'>
-        <http:multipart media-type = "multipart/form-data" >
-            <http:header name="Content-Disposition" value= 'form-data; name="code";'/>
-            <http:body media-type = "text/plain" >{$code}</http:body>
-            <http:header name="Content-Disposition" value= 'form-data; name="client_id";' />
-            <http:body media-type = "text/plain">{$OAuthClienID}</http:body>
-            <http:header name="Content-Disposition" value= 'form-data; name="client_secret";' />
-            <http:body media-type = "text/plain">{$OAuthClienSecret}</http:body>
-            <http:header name="Content-Disposition" value= 'form-data; name="grant_type";' />
-            <http:body media-type = "text/plain">authorization_code</http:body>
-        </http:multipart> 
-      </http:request>
-  
-  return 
-      http:send-request($request, $tokenEndPoint)
-};
-
-
 (: устанавливает сессию из мета-данных :)
 declare function oauth:setSession($userMeta as map(*)){
   session:set('accessToken', $userMeta?accessToken),
@@ -185,7 +154,7 @@ declare function oauth:getUserMeta($login) as map(*){
     )
   let $userID := 
     'http://dbx.iro37.ru/unoi/сущности/учащиеся#' || $userHash
-  let $accessToken := oauth:getToken(config:param('authHost'), config:param('login'), config:param('password'))
+  let $accessToken := auth:getJWT(config:param('authHost'), config:param('login'), config:param('password'))
   return 
    map{
       'email' : $login,
@@ -194,29 +163,4 @@ declare function oauth:getUserMeta($login) as map(*){
       'avatar' : config:param('defaultAvatarURL'),
       'userID': $userID
     }
-};
-
-declare
-  %private
-function oauth:getToken($host, $username, $password) as xs:string*
-{
-  let $request := 
-    <http:request method='post'>
-        <http:multipart media-type = "multipart/form-data" >
-            <http:header name="Content-Disposition" value= 'form-data; name="username";'/>
-            <http:body media-type = "text/plain" >{$username}</http:body>
-            <http:header name="Content-Disposition" value= 'form-data; name="password";' />
-            <http:body media-type = "text/plain">{$password}</http:body>
-        </http:multipart> 
-      </http:request>
-  
-  let $response := 
-      http:send-request(
-        $request,
-        $host || "/wp-json/jwt-auth/v1/token"
-    )
-    return
-      if ($response[1]/@status/data()= "200")
-      then($response[2]//token/text())
-      else()
 };

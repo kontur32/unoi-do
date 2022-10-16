@@ -4,7 +4,7 @@ import module namespace config = "app/config" at "../../lib/core/config.xqm";
 import module namespace getData = "getData" at '../../lib/modules/getData.xqm';
 import module namespace getForms = "modules/getForms" at '../../lib/modules/getForms.xqm';
 import module namespace login = "login" at "login.xqm";
-import module namespace auth = "modules/auth" at "../../lib/modules/auth.xqm";
+import module namespace auth = "lib/modules/auth" at "../../lib/modules/auth.xqm";
 import module namespace data = "data.save" at "data.save.xqm";
 
 declare 
@@ -119,7 +119,7 @@ declare function newUser:записьЛичномКабинете( $userLogin ){
         <row id = "{$newUserID}" aboutType = "https://schema.org/Person">
           <cell id="https://schema.org/email">{request:parameter('https://schema.org/email')}</cell>
           <cell id="https://schema.org/givenName">{request:parameter( 'https://schema.org/givenName' ) }</cell>
-          <cell id="id">{ $newUserID }</cell>
+          <cell id="id">{$newUserID}</cell>
           <cell id="https://schema.org/familyName">{ request:parameter( 'https://schema.org/familyName' ) }</cell>
           <cell id="https://schema.org/telephone">{ request:parameter( 'https://schema.org/telephone' ) }</cell>
           <cell id="Пространство имен">http://dbx.iro37.ru/unoi/сущности/учащиеся#</cell>
@@ -139,7 +139,7 @@ declare function newUser:записьЛичномКабинете( $userLogin ){
     $response
 };
 
-declare function newUser:создатьПользователяМудл( $поляПользователя ){
+declare function newUser:создатьПользователяМудл($поляПользователя){
   let $token :=
     json:parse(
       fetch:text(
