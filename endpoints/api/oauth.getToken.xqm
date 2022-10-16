@@ -1,13 +1,22 @@
-module namespace oauth = "oaut/getToken";
+module namespace oauth = "oaut/getToken/titul24";
 
 import module namespace config = "app/config" at "../../lib/core/config.xqm";
 
 declare 
   %rest:GET
-  %rest:query-param( "code", "{ $code }" )
-  %rest:query-param( "state", "{ $state }" )
-  %rest:path( "/unoi/do/api/v01/oauthGetToken" )
-function oauth:main( $code as xs:string, $state as xs:string ){
+  %rest:query-param("code", "{$code}")
+  %rest:query-param("state", "{$state}")
+  %rest:path("/unoi/do/api/v01/oauthGetToken/titul24")
+function oauth:titul24($code as xs:string, $state as xs:string){
+  oauth:main($code, $state)
+};
+
+declare 
+  %rest:GET
+  %rest:query-param("code", "{$code}")
+  %rest:query-param("state", "{$state}")
+  %rest:path("/unoi/do/api/v01/oauthGetToken")
+function oauth:main($code as xs:string, $state as xs:string){
    let $request := 
     <http:request method='post'>
         <http:multipart media-type = "multipart/form-data" >
@@ -39,24 +48,19 @@ function oauth:main( $code as xs:string, $state as xs:string ){
   let $userEmail := $userInfo//user__email/text()
   let $userAuthID := $userInfo//ID/text() (: идентификатор на сервере авторизации :)
   return
-    if( $userEmail )
+    if($userEmail)
     then(
-      let $userMeta:= oauth:getUserMeta( $userEmail )
+      let $userMeta:= oauth:getUserMeta($userEmail)
       let $redir := 
-              if( session:get( 'loginURL' ) )
-              then( session:get( 'loginURL' ), session:delete( 'loginURL' ) )
-              else(
-                config:param( 'host' ) || config:param( 'rootPath' ) || '/u'  
-              )
+        if(session:get('loginURL'))
+        then(session:get('loginURL'), session:delete('loginURL'))
+        else(
+          config:param('host') || config:param('rootPath') || '/u'  
+        )
       return
         (
-          session:set( 'userAuthID', $userAuthID ),
-          session:set( 'accessToken', $userMeta?accessToken ),
-          session:set( "login", $userEmail ),
-          session:set( "userID", $userMeta?userID ),
-          session:set( "displayName", $userMeta?displayName ),
-          session:set( 'userAvatarURL', $userMeta?avatar ),
-          web:redirect( $redir )
+          oauth:setSession($userMeta),
+          web:redirect($redir)
         )
     )
     else(
@@ -64,18 +68,28 @@ function oauth:main( $code as xs:string, $state as xs:string ){
     )
 };
 
-declare function oauth:getUserMeta( $login ){
+declare function oauth:setSession($userMeta){
+  session:set('accessToken', $userMeta?accessToken),
+  session:set("login", $userMeta?email),
+  session:set("userID", $userMeta?userID),
+  session:set("displayName", $userMeta?displayName),
+  session:set('userAvatarURL', $userMeta?avatar)
+};
+
+declare function oauth:getUserMeta($login){
   let $userHash :=
     lower-case(
-      string( xs:hexBinary( hash:md5( lower-case( $login ) ) ) )
+      string(xs:hexBinary(hash:md5(lower-case($login))))
     )
   let $userID := 
     'http://dbx.iro37.ru/unoi/сущности/учащиеся#' || $userHash
+  let $accessToken := oauth:getToken(config:param('authHost'), config:param('login'), config:param('password'))
   return 
    map{
+      'email' : $login,
       'displayName' : $login,
-      'accessToken' : oauth:getToken( config:param( 'authHost' ), config:param( 'login' ), config:param( 'password' ) ),
-      'avatar' : config:param( 'defaultAvatarURL' ),
+      'accessToken' : $accessToken,
+      'avatar' : config:param('defaultAvatarURL'),
       'userID': $userID
     }
 };
