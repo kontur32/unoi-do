@@ -7,7 +7,7 @@ declare function login:main( $params as map(*) ){
       <div class="card shadow rounded text-center m-4 alert alert-info">{session:get('loginMessage')}</div>
     )
     else()
-  let $OAuthCodeURL :=
+  let $OAuthCodeURLtitul24 :=
     web:create-url(
       $params?_conf('OAuthCodeEndpoint'),
       map{
@@ -16,9 +16,19 @@ declare function login:main( $params as map(*) ){
         'state':'state'
       }
     )
+  let $OAuthCodeURLyandexID :=
+    web:create-url(
+      'https://oauth.yandex.ru/authorize',
+      map{
+        'client_id':'6e24a6e883ea4413b947d31c73d340d4',
+        'response_type':'code',
+        'state':'state'
+      }
+    )
   return
     map{
-      'oauthEndpoint' : $OAuthCodeURL,
+      'OAuthCodeURLtitul24' : $OAuthCodeURLtitul24,
+      'OAuthCodeURLyandexID' : $OAuthCodeURLyandexID,
       'сообщение' : $сообщение
     }
 };
