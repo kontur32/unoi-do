@@ -15,7 +15,7 @@ function oauth:yandexID($code as xs:string, $state as xs:string){
       '96c2c9faf9574a89a3bea5e99d4c7c69',
       $code
     )//access__token/text()
-  return
+  let $userEmail := 
     fetch:xml(
       web:create-url(
         'https://login.yandex.ru/info',
@@ -24,7 +24,16 @@ function oauth:yandexID($code as xs:string, $state as xs:string){
           'oauth_token':$accessToken
         }
       )
-    )/user/default_email
+    )/user/default_email/text()
+  return
+    if($userEmail)
+    then(
+      let $userMeta:= oauth:getUserMeta($userEmail)
+      let $redir := oauth:loginRedirectURL()   
+      return
+        (oauth:setSession($userMeta), web:redirect($redir))
+    )
+    else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
 };
 
 
@@ -47,11 +56,11 @@ function oauth:main($code as xs:string, $state as xs:string){
       config:param('OAuthClienSecret'),
       $code
     )/json/access__token/text()
-  let $userInfo := oauth:userInfo($accessToken)    
+  let $userEmail := oauth:userInfo($accessToken)//user__email/text() 
   return
-    if($userInfo//user__email/text())
+    if($userEmail)
     then(
-      let $userMeta:= oauth:getUserMeta($userInfo//user__email/text())
+      let $userMeta:= oauth:getUserMeta($userEmail)
       let $redir := oauth:loginRedirectURL()   
       return
         (oauth:setSession($userMeta), web:redirect($redir))
