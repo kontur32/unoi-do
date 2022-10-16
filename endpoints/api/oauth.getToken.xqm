@@ -2,6 +2,7 @@ module namespace oauth = "oaut/getToken/titul24";
 
 import module namespace config = "app/config" at "../../lib/core/config.xqm";
 import module namespace auth = "lib/modules/auth" at "../../lib/modules/auth.xqm";
+
 import module namespace titul24 = "lib/modules/titul24" 
   at "../../lib/modules/titul24.xqm";
 import module namespace yandexID = "lib/modules/yandexID" 
@@ -13,9 +14,18 @@ declare
   %rest:GET
   %rest:query-param("code", "{$code}")
   %rest:query-param("state", "{$state}")
-  %rest:path("/unoi/do/api/v01/oauthGetToken/vkID")
-function oauth:vkID($code as xs:string, $state as xs:string){
-  let $userEmail := vkID:userEmail($code)
+  %rest:path("/unoi/do/api/v01/oauthGetToken/{$oauthService}")
+function oauth:vkID(
+  $oauthService as xs:string,
+  $code as xs:string,
+  $state as xs:string
+){
+  let $userEmail := 
+    switch ($oauthService)
+    case 'vkID' return vkID:userEmail($code)
+    case 'yandexID' return yandexID:userEmail($code)
+    case 'titul24' return titul24:userEmail($code)
+    default return ()
   return
      if($userEmail)
     then(
