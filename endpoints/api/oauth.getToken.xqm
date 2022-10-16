@@ -8,12 +8,23 @@ declare
   %rest:query-param("state", "{$state}")
   %rest:path("/unoi/do/api/v01/oauthGetToken/yandexID")
 function oauth:yandexID($code as xs:string, $state as xs:string){
-  oauth:getAuthToken(
-    'https://oauth.yandex.ru/token',
-    '6e24a6e883ea4413b947d31c73d340d4',
-    '96c2c9faf9574a89a3bea5e99d4c7c69',
-    $code
-  )
+  let $accessToken := 
+    oauth:getAuthToken(
+      'https://oauth.yandex.ru/token',
+      '6e24a6e883ea4413b947d31c73d340d4',
+      '96c2c9faf9574a89a3bea5e99d4c7c69',
+      $code
+    )//access__token/text()
+  return
+    fetch:xml(
+      web:create-url(
+        'https://login.yandex.ru/info',
+        map{
+          'format':'xml',
+          'oauth_token':$accessToken
+        }
+      )
+    )
 };
 
 
