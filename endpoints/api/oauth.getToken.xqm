@@ -16,7 +16,7 @@ declare
 function oauth:main($code as xs:string, $state as xs:string){
   let $response :=
     oauth:getAuthToken(
-      'http://portal.titul24.ru/oauth/token',
+      config:param('OAuthTokenEndpoint'),
       config:param('OAuthClienID'),
       config:param('OAuthClienSecret'),
       $code
