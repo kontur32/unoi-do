@@ -24,7 +24,7 @@ function oauth:vkID($code as xs:string, $state as xs:string){
       )
     )//access__token/text()
   return
-    $accessToken
+    ($code, $accessToken)
 };
 
 declare 
