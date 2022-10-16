@@ -36,6 +36,14 @@ function oauth:vkID($code as xs:string, $state as xs:string){
 
 declare 
   %rest:GET
+  %rest:query-param("access_token", "{$access_token}")
+  %rest:path("/unoi/do/api/v01/oauthGetToken/yandexID/quick")
+function oauth:yandexID($access_token){
+  $access_token
+};
+
+declare 
+  %rest:GET
   %rest:query-param("code", "{$code}")
   %rest:query-param("state", "{$state}")
   %rest:path("/unoi/do/api/v01/oauthGetToken/yandexID")
