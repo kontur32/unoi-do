@@ -8,23 +8,8 @@ declare
   %rest:query-param("state", "{$state}")
   %rest:path("/unoi/do/api/v01/oauthGetToken/vkID")
 function oauth:vkID($code as xs:string, $state as xs:string){
-  let $accessToken :=
-    json:parse(
-      fetch:text(
-        web:create-url(
-          'https://oauth.vk.com/access_token',
-          map{
-            'client_id':'51450585',
-            'client_secret': 'eIvx3cjjlqpstOrWZ9fX',
-            'redirect_uri': 'https://dbx93-ssl.iro37.ru/unoi/do/api/v01/oauthGetToken/vkID',
-            'scope':'email',
-            'code':$code
-          }
-        )
-      )
-    )//access__token/text()
-  return
-    ($code, $accessToken)
+  
+  $code
 };
 
 declare 
