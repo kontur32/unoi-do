@@ -25,10 +25,22 @@ declare function login:main( $params as map(*) ){
         'state':'state'
       }
     )
+  let $OAuthCodeURLvkID :=
+    web:create-url(
+      'https://oauth.vk.com/authorize',
+      map{
+        'client_id':'51450585',
+        'redirect_uri':'https://dbx93-ssl.iro37.ru/unoi/do/api/v01/oauthGetToken/vkID',
+        'scope':'email',
+        'response_type':'code',
+        'state':'state'
+      }
+    )
   return
     map{
       'OAuthCodeURLtitul24' : $OAuthCodeURLtitul24,
       'OAuthCodeURLyandexID' : $OAuthCodeURLyandexID,
+      'OAuthCodeURLvkID' : $OAuthCodeURLvkID,
       'сообщение' : $сообщение
     }
 };
