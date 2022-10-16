@@ -6,6 +6,16 @@ declare
   %rest:GET
   %rest:query-param("code", "{$code}")
   %rest:query-param("state", "{$state}")
+  %rest:path("/unoi/do/api/v01/oauthGetToken/yandexID")
+function oauth:yandexID($code as xs:string, $state as xs:string){
+  $code, $state
+};
+
+
+declare 
+  %rest:GET
+  %rest:query-param("code", "{$code}")
+  %rest:query-param("state", "{$state}")
   %rest:path("/unoi/do/api/v01/oauthGetToken/titul24")
 function oauth:titul24($code as xs:string, $state as xs:string){
   oauth:main($code, $state)
@@ -32,6 +42,8 @@ function oauth:main($code as xs:string, $state as xs:string){
     )
     else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
 };
+
+
 
 
 (: генерирует редирект URL после успешной авторизации :)
