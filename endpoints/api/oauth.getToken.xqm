@@ -6,6 +6,15 @@ declare
   %rest:GET
   %rest:query-param("code", "{$code}")
   %rest:query-param("state", "{$state}")
+  %rest:path("/unoi/do/api/v01/oauthGetToken/vkID")
+function oauth:vkID($code as xs:string, $state as xs:string){
+  $code
+};
+
+declare 
+  %rest:GET
+  %rest:query-param("code", "{$code}")
+  %rest:query-param("state", "{$state}")
   %rest:path("/unoi/do/api/v01/oauthGetToken/yandexID")
 function oauth:yandexID($code as xs:string, $state as xs:string){
   let $accessToken := 
