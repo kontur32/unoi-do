@@ -22,9 +22,16 @@ function oauth:vkID($code as xs:string, $state as xs:string){
           }
         )
     )
-  )
+  )//email/text()
   return
-    $userEmail//email/text()
+     if($userEmail)
+    then(
+      let $userMeta:= oauth:getUserMeta($userEmail)
+      let $redir := oauth:loginRedirectURL()   
+      return
+        (oauth:setSession($userMeta), web:redirect($redir))
+    )
+    else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
 };
 
 declare 
