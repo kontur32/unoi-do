@@ -1,7 +1,9 @@
 module namespace oauth = "oaut/getToken/titul24";
 
-import module namespace config = "app/config" at "../../lib/core/config.xqm";
-import module namespace auth = "lib/modules/auth" at "../../lib/modules/auth.xqm";
+import module namespace config = "app/config"
+  at "../../lib/core/config.xqm";
+import module namespace auth = "lib/modules/auth"
+  at "../../lib/modules/auth.xqm";
 
 import module namespace titul24 = "lib/modules/titul24" 
   at "../../lib/modules/titul24.xqm";
@@ -37,6 +39,7 @@ function oauth:vkID(
     else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
 };
 
+
 (: эксперименты с многвенной авторизацией от яндекса :)
 declare 
   %rest:GET
@@ -45,41 +48,7 @@ function oauth:yandexID(){
   <a>{request:uri()}</a>
 };
 
-declare 
-  %rest:GET
-  %rest:query-param("code", "{$code}")
-  %rest:query-param("state", "{$state}")
-  %rest:path("/unoi/do/api/v01/oauthGetToken/yandexID")
-function oauth:yandexID($code as xs:string, $state as xs:string){
-  let $userEmail := yandexID:userEmail($code)
-  return
-    if($userEmail)
-    then(
-      let $userMeta:= oauth:getUserMeta($userEmail)
-      let $redir := oauth:loginRedirectURL()   
-      return
-        (oauth:setSession($userMeta), web:redirect($redir))
-    )
-    else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
-};
 
-declare 
-  %rest:GET
-  %rest:query-param("code", "{$code}")
-  %rest:query-param("state", "{$state}")
-  %rest:path("/unoi/do/api/v01/oauthGetToken/titul24")
-function oauth:titul24($code as xs:string, $state as xs:string){
-  let $userEmail := titul24:userEmail($code) 
-  return
-    if($userEmail)
-    then(
-      let $userMeta:= oauth:getUserMeta($userEmail)
-      let $redir := oauth:loginRedirectURL()   
-      return
-        (oauth:setSession($userMeta), web:redirect($redir))
-    )
-    else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
-};
 
 (: генерирует редирект URL после успешной авторизации :)
 declare
@@ -91,23 +60,6 @@ function oauth:loginRedirectURL()
   else(config:param('host') || config:param('rootPath') || '/u')
 };
 
-(: получает информацию о пользователе с сервиса аутентификации :)
-declare
-  %private
-function oauth:userInfo(
-  $accessToken as xs:string
-)
-{
-  json:parse(
-    fetch:text( 
-      web:create-url(
-        config:param('OAuthUserInfoEndpoint'),
-        map{'access_token' : $accessToken}
-      )
-    )
-  )
-};
-
 (: устанавливает сессию из мета-данных :)
 declare function oauth:setSession($userMeta as map(*)){
   session:set('accessToken', $userMeta?accessToken),
@@ -116,7 +68,6 @@ declare function oauth:setSession($userMeta as map(*)){
   session:set("displayName", $userMeta?displayName),
   session:set('userAvatarURL', $userMeta?avatar)
 };
-
 
 (: возвращает map метаданными пользователя для установки сессии :)
 declare function oauth:getUserMeta($login) as map(*){
