@@ -11,40 +11,17 @@ function oauth:titul24($code as xs:string, $state as xs:string){
   oauth:main($code, $state)
 };
 
-declare 
-  %rest:GET
-  %rest:query-param("code", "{$code}")
-  %rest:query-param("state", "{$state}")
-  %rest:path("/unoi/do/api/v01/oauthGetToken")
+declare
+  %private
 function oauth:main($code as xs:string, $state as xs:string){
-   let $request := 
-    <http:request method='post'>
-        <http:multipart media-type = "multipart/form-data" >
-            <http:header name="Content-Disposition" value= 'form-data; name="code";'/>
-            <http:body media-type = "text/plain" >{ $code }</http:body>
-            <http:header name="Content-Disposition" value= 'form-data; name="client_id";' />
-            <http:body media-type = "text/plain">{ config:param( 'OAuthClienID' ) }</http:body>
-            <http:header name="Content-Disposition" value= 'form-data; name="client_secret";' />
-            <http:body media-type = "text/plain">{ config:param( 'OAuthClienSecret' ) }</http:body>
-            <http:header name="Content-Disposition" value= 'form-data; name="grant_type";' />
-            <http:body media-type = "text/plain">authorization_code</http:body>
-        </http:multipart> 
-      </http:request>
-  
-  let $response := 
-      http:send-request(
-        $request,
-        'http://portal.titul24.ru/oauth/token'
-    )[ 2 ]
+  let $response := oauth:getAuthToken('http://portal.titul24.ru/oauth/token', $code)
   let $accessToken := $response/json/access__token/text()
-  
   let $userInfo :=
     json:parse(
       fetch:text( 
         'http://portal.titul24.ru/oauth/me?access_token=' || $accessToken
       )
     )
-
   let $userEmail := $userInfo//user__email/text()
   let $userAuthID := $userInfo//ID/text() (: идентификатор на сервере авторизации :)
   return
@@ -54,21 +31,39 @@ function oauth:main($code as xs:string, $state as xs:string){
       let $redir := 
         if(session:get('loginURL'))
         then(session:get('loginURL'), session:delete('loginURL'))
-        else(
-          config:param('host') || config:param('rootPath') || '/u'  
-        )
+        else(config:param('host') || config:param('rootPath') || '/u')
       return
-        (
-          oauth:setSession($userMeta),
-          web:redirect($redir)
-        )
+        (oauth:setSession($userMeta), web:redirect($redir))
     )
     else(
       <err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>
     )
 };
 
-declare function oauth:setSession($userMeta){
+
+(: получает access token для пользователя на сервеси аутентификации :)
+declare function oauth:getAuthToken($tokenEndPoint, $code){
+  let $request := 
+    <http:request method='post'>
+        <http:multipart media-type = "multipart/form-data" >
+            <http:header name="Content-Disposition" value= 'form-data; name="code";'/>
+            <http:body media-type = "text/plain" >{$code}</http:body>
+            <http:header name="Content-Disposition" value= 'form-data; name="client_id";' />
+            <http:body media-type = "text/plain">{config:param('OAuthClienID')}</http:body>
+            <http:header name="Content-Disposition" value= 'form-data; name="client_secret";' />
+            <http:body media-type = "text/plain">{config:param('OAuthClienSecret')}</http:body>
+            <http:header name="Content-Disposition" value= 'form-data; name="grant_type";' />
+            <http:body media-type = "text/plain">authorization_code</http:body>
+        </http:multipart> 
+      </http:request>
+  
+  return 
+      http:send-request($request, $tokenEndPoint)
+};
+
+
+(: устанавливает сессию из мета-данных :)
+declare function oauth:setSession($userMeta as map(*)){
   session:set('accessToken', $userMeta?accessToken),
   session:set("login", $userMeta?email),
   session:set("userID", $userMeta?userID),
@@ -76,7 +71,9 @@ declare function oauth:setSession($userMeta){
   session:set('userAvatarURL', $userMeta?avatar)
 };
 
-declare function oauth:getUserMeta($login){
+
+(: возвращает map метаданными пользователя для установки сессии :)
+declare function oauth:getUserMeta($login) as map(*){
   let $userHash :=
     lower-case(
       string(xs:hexBinary(hash:md5(lower-case($login))))
