@@ -46,7 +46,15 @@ function oauth:main($code as xs:string, $state as xs:string){
 
 
 (: получает access token для пользователя на сервеси аутентификации :)
-declare function oauth:getAuthToken($tokenEndPoint, $OAuthClienID, $OAuthClienSecret, $code){
+declare
+  %private
+function oauth:getAuthToken(
+  $tokenEndPoint as xs:string,
+  $OAuthClienID as xs:string,
+  $OAuthClienSecret as xs:string,
+  $code as xs:string
+) as element(*)
+{
   let $request := 
     <http:request method='post'>
         <http:multipart media-type = "multipart/form-data" >
