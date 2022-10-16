@@ -14,7 +14,13 @@ function oauth:titul24($code as xs:string, $state as xs:string){
 declare
   %private
 function oauth:main($code as xs:string, $state as xs:string){
-  let $response := oauth:getAuthToken('http://portal.titul24.ru/oauth/token', $code)
+  let $response :=
+    oauth:getAuthToken(
+      'http://portal.titul24.ru/oauth/token',
+      config:param('OAuthClienID'),
+      config:param('OAuthClienSecret'),
+      $code
+    )
   let $accessToken := $response/json/access__token/text()
   let $userInfo :=
     json:parse(
@@ -35,23 +41,21 @@ function oauth:main($code as xs:string, $state as xs:string){
       return
         (oauth:setSession($userMeta), web:redirect($redir))
     )
-    else(
-      <err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>
-    )
+    else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
 };
 
 
 (: получает access token для пользователя на сервеси аутентификации :)
-declare function oauth:getAuthToken($tokenEndPoint, $code){
+declare function oauth:getAuthToken($tokenEndPoint, $OAuthClienID, $OAuthClienSecret, $code){
   let $request := 
     <http:request method='post'>
         <http:multipart media-type = "multipart/form-data" >
             <http:header name="Content-Disposition" value= 'form-data; name="code";'/>
             <http:body media-type = "text/plain" >{$code}</http:body>
             <http:header name="Content-Disposition" value= 'form-data; name="client_id";' />
-            <http:body media-type = "text/plain">{config:param('OAuthClienID')}</http:body>
+            <http:body media-type = "text/plain">{$OAuthClienID}</http:body>
             <http:header name="Content-Disposition" value= 'form-data; name="client_secret";' />
-            <http:body media-type = "text/plain">{config:param('OAuthClienSecret')}</http:body>
+            <http:body media-type = "text/plain">{$OAuthClienSecret}</http:body>
             <http:header name="Content-Disposition" value= 'form-data; name="grant_type";' />
             <http:body media-type = "text/plain">authorization_code</http:body>
         </http:multipart> 
