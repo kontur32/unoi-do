@@ -34,12 +34,12 @@ function oauth:vkID($code as xs:string, $state as xs:string){
     else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
 };
 
+(: эксперименты с многвенной авторизацией от яндекса :)
 declare 
   %rest:GET
-  %rest:query-param("access_token", "{$access_token}")
   %rest:path("/unoi/do/api/v01/oauthGetToken/yandexID/quick")
-function oauth:yandexID($access_token){
-  $access_token
+function oauth:yandexID(){
+  <a>{request:uri()}</a>
 };
 
 declare 
