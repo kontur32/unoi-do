@@ -50,7 +50,10 @@ function oauth:userInfo(
 {
   json:parse(
     fetch:text( 
-      'http://portal.titul24.ru/oauth/me?access_token=' || $accessToken
+      web:create-url(
+        config:param('OAuthUserInfoEndpoint'),
+        map{'access_token' : $accessToken}
+      )
     )
   )
 };
