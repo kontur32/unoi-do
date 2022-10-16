@@ -14,22 +14,18 @@ function oauth:titul24($code as xs:string, $state as xs:string){
 declare
   %private
 function oauth:main($code as xs:string, $state as xs:string){
-  let $response :=
+  let $accessToken :=
     oauth:getAuthToken(
       config:param('OAuthTokenEndpoint'),
       config:param('OAuthClienID'),
       config:param('OAuthClienSecret'),
       $code
-    )
-  let $accessToken := $response/json/access__token/text()
-  let $userInfo :=
-    json:parse(
-      fetch:text( 
-        'http://portal.titul24.ru/oauth/me?access_token=' || $accessToken
-      )
-    )
+    )/json/access__token/text()
+
+  let $userInfo := oauth:userInfo($accessToken)    
   let $userEmail := $userInfo//user__email/text()
   let $userAuthID := $userInfo//ID/text() (: идентификатор на сервере авторизации :)
+  
   return
     if($userEmail)
     then(
@@ -44,6 +40,20 @@ function oauth:main($code as xs:string, $state as xs:string){
     else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
 };
 
+
+(: получает информацию о пользователе с сервиса аутентификации :)
+declare
+  %private
+function oauth:userInfo(
+  $accessToken as xs:string
+)
+{
+  json:parse(
+    fetch:text( 
+      'http://portal.titul24.ru/oauth/me?access_token=' || $accessToken
+    )
+  )
+};
 
 (: получает access token для пользователя на сервеси аутентификации :)
 declare
