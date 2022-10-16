@@ -8,7 +8,12 @@ declare
   %rest:query-param("state", "{$state}")
   %rest:path("/unoi/do/api/v01/oauthGetToken/vkID")
 function oauth:vkID($code as xs:string, $state as xs:string){
-  $code
+  oauth:getAuthToken(
+    'https://oauth.vk.com/access_token',
+    '51450585',
+    'eIvx3cjjlqpstOrWZ9fX',
+    $code
+  )
 };
 
 declare 
