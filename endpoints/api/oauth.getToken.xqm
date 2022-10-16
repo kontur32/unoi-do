@@ -24,7 +24,7 @@ function oauth:yandexID($code as xs:string, $state as xs:string){
           'oauth_token':$accessToken
         }
       )
-    )
+    )/user/default_email
 };
 
 
