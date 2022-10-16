@@ -21,25 +21,28 @@ function oauth:main($code as xs:string, $state as xs:string){
       config:param('OAuthClienSecret'),
       $code
     )/json/access__token/text()
-
   let $userInfo := oauth:userInfo($accessToken)    
-  let $userEmail := $userInfo//user__email/text()
-  let $userAuthID := $userInfo//ID/text() (: идентификатор на сервере авторизации :)
-  
   return
-    if($userEmail)
+    if($userInfo//user__email/text())
     then(
-      let $userMeta:= oauth:getUserMeta($userEmail)
-      let $redir := 
-        if(session:get('loginURL'))
-        then(session:get('loginURL'), session:delete('loginURL'))
-        else(config:param('host') || config:param('rootPath') || '/u')
+      let $userMeta:= oauth:getUserMeta($userInfo//user__email/text())
+      let $redir := oauth:loginRedirectURL()   
       return
         (oauth:setSession($userMeta), web:redirect($redir))
     )
     else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
 };
 
+
+(: генерирует редирект URL после успешной авторизации :)
+declare
+  %private
+function oauth:loginRedirectURL()
+{
+  if(session:get('loginURL'))
+  then(session:get('loginURL'), session:delete('loginURL'))
+  else(config:param('host') || config:param('rootPath') || '/u')
+};
 
 (: получает информацию о пользователе с сервиса аутентификации :)
 declare
@@ -58,7 +61,7 @@ function oauth:userInfo(
   )
 };
 
-(: получает access token для пользователя на сервеси аутентификации :)
+(: получает access token для пользователя на сервисе аутентификации :)
 declare
   %private
 function oauth:getAuthToken(
@@ -118,15 +121,15 @@ declare function oauth:getUserMeta($login) as map(*){
 
 declare
   %private
-function oauth:getToken( $host, $username, $password ) as xs:string*
+function oauth:getToken($host, $username, $password) as xs:string*
 {
   let $request := 
     <http:request method='post'>
         <http:multipart media-type = "multipart/form-data" >
             <http:header name="Content-Disposition" value= 'form-data; name="username";'/>
-            <http:body media-type = "text/plain" >{ $username }</http:body>
+            <http:body media-type = "text/plain" >{$username}</http:body>
             <http:header name="Content-Disposition" value= 'form-data; name="password";' />
-            <http:body media-type = "text/plain">{ $password }</http:body>
+            <http:body media-type = "text/plain">{$password}</http:body>
         </http:multipart> 
       </http:request>
   
@@ -136,7 +139,7 @@ function oauth:getToken( $host, $username, $password ) as xs:string*
         $host || "/wp-json/jwt-auth/v1/token"
     )
     return
-      if ( $response[ 1 ]/@status/data() = "200" )
-      then( $response[ 2 ]//token/text() )
-      else( )
+      if ($response[1]/@status/data()= "200")
+      then($response[2]//token/text())
+      else()
 };
