@@ -53,7 +53,7 @@ function oauth:getAuthToken(
   $OAuthClienID as xs:string,
   $OAuthClienSecret as xs:string,
   $code as xs:string
-) as element(*)
+)
 {
   let $request := 
     <http:request method='post'>
