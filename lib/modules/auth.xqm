@@ -1,7 +1,6 @@
 module namespace auth = "lib/modules/auth";
 
 (: получает токен доступа accessToken :)
-
 declare function auth:getJWT($host, $username, $password)
 {
   let $request := 

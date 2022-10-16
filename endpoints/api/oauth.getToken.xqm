@@ -2,6 +2,12 @@ module namespace oauth = "oaut/getToken/titul24";
 
 import module namespace config = "app/config" at "../../lib/core/config.xqm";
 import module namespace auth = "lib/modules/auth" at "../../lib/modules/auth.xqm";
+import module namespace titul24 = "lib/modules/titul24" 
+  at "../../lib/modules/titul24.xqm";
+import module namespace yandexID = "lib/modules/yandexID" 
+  at "../../lib/modules/yandexID.xqm";
+import module namespace vkID = "lib/modules/vkID" 
+  at "../../lib/modules/vkID.xqm";
 
 declare 
   %rest:GET
@@ -9,21 +15,7 @@ declare
   %rest:query-param("state", "{$state}")
   %rest:path("/unoi/do/api/v01/oauthGetToken/vkID")
 function oauth:vkID($code as xs:string, $state as xs:string){
-  let $userEmail := 
-    json:parse(
-      fetch:text(
-        web:create-url(
-          'https://oauth.vk.com/access_token',
-          map{
-            'client_id':'51450585',
-            'client_secret': 'eIvx3cjjlqpstOrWZ9fX',
-            'redirect_uri': config:param('host') || '/unoi/do/api/v01/oauthGetToken/vkID',
-            'scope':'email',
-            'code':$code
-          }
-        )
-    )
-  )//email/text()
+  let $userEmail := vkID:userEmail($code)
   return
      if($userEmail)
     then(
@@ -49,23 +41,7 @@ declare
   %rest:query-param("state", "{$state}")
   %rest:path("/unoi/do/api/v01/oauthGetToken/yandexID")
 function oauth:yandexID($code as xs:string, $state as xs:string){
-  let $accessToken := 
-    auth:getAuthToken(
-      'https://oauth.yandex.ru/token',
-      '6e24a6e883ea4413b947d31c73d340d4',
-      '96c2c9faf9574a89a3bea5e99d4c7c69',
-      $code
-    )//access__token/text()
-  let $userEmail := 
-    fetch:xml(
-      web:create-url(
-        'https://login.yandex.ru/info',
-        map{
-          'format':'xml',
-          'oauth_token':$accessToken
-        }
-      )
-    )/user/default_email/text()
+  let $userEmail := yandexID:userEmail($code)
   return
     if($userEmail)
     then(
@@ -77,27 +53,13 @@ function oauth:yandexID($code as xs:string, $state as xs:string){
     else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
 };
 
-
 declare 
   %rest:GET
   %rest:query-param("code", "{$code}")
   %rest:query-param("state", "{$state}")
   %rest:path("/unoi/do/api/v01/oauthGetToken/titul24")
 function oauth:titul24($code as xs:string, $state as xs:string){
-  oauth:main($code, $state)
-};
-
-declare
-  %private
-function oauth:main($code as xs:string, $state as xs:string){
-  let $accessToken :=
-    auth:getAuthToken(
-      config:param('OAuthTokenEndpoint'),
-      config:param('OAuthClienID'),
-      config:param('OAuthClienSecret'),
-      $code
-    )/json/access__token/text()
-  let $userEmail := oauth:userInfo($accessToken)//user__email/text() 
+  let $userEmail := titul24:userEmail($code) 
   return
     if($userEmail)
     then(
