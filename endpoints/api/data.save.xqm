@@ -4,18 +4,22 @@ import module namespace config = "app/config" at "../../lib/core/config.xqm";
 
 declare 
   %rest:POST
-  %rest:form-param ( "_t24_templateID", "{ $templateID }", "" )
-  %rest:form-param ( "_t24_id", "{ $id }", "" )
-  %rest:form-param ( "_t24_type", "{ $aboutType }" )
-  %rest:form-param ( "_t24_saveRedirect", "{ $redirect }", "/" )
-  %rest:path( "/unoi/do/api/v01/data" )
-function data:main( $templateID, $id, $aboutType, $redirect ){
+  %rest:form-param ("_t24_templateID", "{ $templateID }", "")
+  %rest:form-param ("_t24_id", "{ $id }", "")
+  %rest:form-param ("_t24_type", "{ $aboutType }" )
+  %rest:form-param ("_t24_saveRedirect", "{ $redirect }", "/")
+  %rest:path( "/unoi/do/api/v01/data")
+function data:main($templateID, $id, $aboutType, $redirect){
    let $userID := 
-     json:parse( convert:binary-to-string( xs:base64Binary( tokenize( session:get( "accessToken" ), '\.' )[ 2 ] || '=' ) ) )
+     json:parse(
+       convert:binary-to-string(
+         xs:base64Binary(tokenize(session:get("accessToken"), '\.')[2] || '=')
+       )
+     )
     /json/data/user/id/text()
    
    return
-     if( $userID )
+     if($userID)
      then(
      let $paramNames := 
         for $name in  distinct-values( request:parameter-names() )
