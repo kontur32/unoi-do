@@ -10,10 +10,11 @@ declare
   %rest:form-param ("_t24_saveRedirect", "{ $redirect }", "/")
   %rest:path( "/unoi/do/api/v01/data")
 function data:main($templateID, $id, $aboutType, $redirect){
+   (:может быть ошибка при конвертации из-за '=' :)
    let $userID := 
      json:parse(
        convert:binary-to-string(
-         xs:base64Binary(tokenize(session:get("accessToken"), '\.')[2] || '=')
+         xs:base64Binary(tokenize(session:get("accessToken"), '\.')[2])
        )
      )
     /json/data/user/id/text()
