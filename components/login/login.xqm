@@ -4,7 +4,8 @@ declare function login:main( $params as map(*) ){
   let $сообщение :=
     if(session:get('loginMessage'))
     then(
-      <div class="card shadow rounded text-center m-4 alert alert-info">{session:get('loginMessage')}</div>
+      <div class="card shadow rounded text-center m-4 alert alert-info">{session:get('loginMessage')}</div>,
+      session:delete('loginMessage')
     )
     else()
   let $OAuthCodeURLtitul24 :=
