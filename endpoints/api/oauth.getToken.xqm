@@ -63,7 +63,14 @@ function oauth:vkID(
           return
             (oauth:setSession($userMeta), web:redirect($redir))
         )
-        else(<err:NOTREGISTRED>ошибка авторизации</err:NOTREGISTRED>)
+        else(
+          session:set(
+            'loginMessage', 
+            'Пользователель ' || $userEmail || ' не зарегистрирован. ' || 
+            'Заполните форму регистрации или войдите с другой учетной записью (email)'
+          ),
+          web:redirect(config:param('rootPath'))
+        )
     )
     else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
 };
