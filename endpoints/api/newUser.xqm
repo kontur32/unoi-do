@@ -27,7 +27,6 @@ function newUser:main($email as xs:string){
           'Вы успешно зарегистрированы. Пароль направлен на Вашу почту: ' || $email
         ),
         web:redirect(config:param('rootPath')),
-        session:delete('loginMessage'),
         newUser:записьЛичномКабинете($email),
         newUser:создатьПользователяМудл($поляАккаунтаМудл)
       )
