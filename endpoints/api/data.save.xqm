@@ -7,7 +7,7 @@ declare
   %rest:form-param ("_t24_templateID", "{ $templateID }", "")
   %rest:form-param ("_t24_id", "{ $id }", "")
   %rest:form-param ("_t24_type", "{ $aboutType }" )
-  %rest:form-param ("_t24_saveRedirect", "{ $redirect }", "/")
+  %rest:form-param ("_t24_saveRedirect", "{$redirect}", "/")
   %rest:path( "/unoi/do/api/v01/data")
 function data:main($templateID, $id, $aboutType, $redirect){
    (:может быть ошибка при конвертации из-за '=' :)
@@ -37,12 +37,12 @@ function data:main($templateID, $id, $aboutType, $redirect){
            "paramNames" : $paramNames
          }
          
-    let $dataRecord :=  data:buildDataRecord( data:dataRecord( $params ) )
+    let $dataRecord := data:buildDataRecord(data:dataRecord($params))
     let $response :=
       data:postRecord(
         $dataRecord,
-        config:param( 'api.method.getData' ),
-        session:get( "accessToken")
+        config:param('api.method.getData'),
+        session:get("accessToken")
       )
     let $reponseCode := $response[ 1 ]/@status/data()
     let $message := 
@@ -60,22 +60,23 @@ function data:main($templateID, $id, $aboutType, $redirect){
     else( <err:AUTH01>ID пользователя не определен</err:AUTH01> )
 };
 
+(: функция трансформируе запись в TRCI - можно исключить заменив:
+  - aboutType на type
+  - label на id
+  
+  либо использовать схему для мэпинга label в id полей
+:)
 declare 
   %private
-function data:buildDataRecord( $record ){
+function data:buildDataRecord($record){
    let $model := <table/>
-      
    let $request :=
       <http:request method='POST'>
         <http:multipart media-type = "multipart/form-data" >
             <http:header name="Content-Disposition" value= 'form-data; name="data";'/>
-            <http:body media-type = "application/xml" >
-              { $record }
-            </http:body>
+            <http:body media-type = "application/xml">{$record}</http:body>
             <http:header name="Content-Disposition" value= 'form-data; name="model";'/>
-            <http:body media-type = "application/xml" >
-              { $model }
-            </http:body>
+            <http:body media-type = "application/xml">{$model}</http:body>
         </http:multipart> 
       </http:request>
   
@@ -86,17 +87,16 @@ function data:buildDataRecord( $record ){
     )[2]
 };
 
-
 declare 
   %public
-function data:dataRecord( $params ){
+function data:dataRecord($params){
   <table
-      id = "{ $params?currentID }"
-      label = "{ $params?label }"
-      aboutType = "{ $params?aboutType }" 
-      templateID = "{ $params?templateID }" 
-      userID = "{ $params?userID }" 
-      modelURL = "{  $params?modelURL }"
+      id = "{$params?currentID}"
+      label = "{$params?label}"
+      aboutType = "{$params?aboutType}" 
+      templateID = "{$params?templateID}" 
+      userID = "{$params?userID}" 
+      modelURL = "{$params?modelURL}"
       status = "active">
       <row>
         (: добавляет поля текстовые :)
@@ -112,18 +112,18 @@ function data:dataRecord( $params ){
         (: добавляет поля-файлы :)
         {
           for $param in $params?paramNames
-          let $paramValue := request:parameter( $param )
+          let $paramValue := request:parameter($param)
           where
-            ( $paramValue instance of map(*)  ) and 
+            ($paramValue instance of map(*)) and 
             not (
-              string( map:get( $paramValue, map:keys( $paramValue )[ 1 ] ) ) = ""
+              string(map:get($paramValue, map:keys($paramValue)[1])) = ""
             ) 
           return
-              <cell label="{ $param }">
+              <cell label="{$param}">
                 <table>
-                  <row id="{ random:uuid() }" label="{ map:keys( $paramValue )[1] }" type="https://schema.org/DigitalDocument">
+                  <row id="{random:uuid()}" label="{map:keys( $paramValue )[1]}" type="https://schema.org/DigitalDocument">
                     <cell id="content">
-                      { xs:string( map:get( $paramValue, map:keys( $paramValue )[1] ) )  }
+                      {xs:string( map:get($paramValue, map:keys($paramValue)[1]))}
                     </cell>
                   </row>
                 </table> 
@@ -142,7 +142,7 @@ declare function data:postRecord( $dataRecord, $path, $accessToken ){
           <http:multipart media-type = "multipart/form-data">
               <http:header name="Content-Disposition" value= 'form-data; name="data";'/>
               <http:body media-type = "application/xml" >
-                { $dataRecord }
+                {$dataRecord}
               </http:body>
           </http:multipart> 
         </http:request>,

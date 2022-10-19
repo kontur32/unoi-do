@@ -86,17 +86,9 @@ declare function newUser:createAuth( $username, $email, $password ){
     $response
 };
 
-declare function newUser:записьЛичномКабинете( $userLogin ){
+declare function newUser:записьЛичномКабинете($userLogin){
   let $userHash :=
-    lower-case(
-        string(
-          xs:hexBinary(
-            hash:md5(
-              lower-case( $userLogin )
-            ) 
-          )
-        )
-      )
+    lower-case(string(xs:hexBinary(hash:md5(lower-case($userLogin)))))
   let $newUserID := 
     'http://dbx.iro37.ru/unoi/сущности/учащиеся#' || $userHash
   
@@ -106,7 +98,9 @@ declare function newUser:записьЛичномКабинете( $userLogin ){
   
   let $modelURL :=
     'http://localhost:9984/zapolnititul/api/v2/forms/' || $templateID || '/model'
-  let $dataRecord :=
+  
+  (: userID  брать из токена :)
+  let $dataRecord :=  
     <table
         id = "{random:uuid()}"
         label = "{$userLogin}"
@@ -118,10 +112,10 @@ declare function newUser:записьЛичномКабинете( $userLogin ){
         updated="{current-dateTime()}">
         <row id = "{$newUserID}" aboutType = "https://schema.org/Person">
           <cell id="https://schema.org/email">{request:parameter('https://schema.org/email')}</cell>
-          <cell id="https://schema.org/givenName">{request:parameter( 'https://schema.org/givenName' ) }</cell>
+          <cell id="https://schema.org/givenName">{request:parameter('https://schema.org/givenName')}</cell>
           <cell id="id">{$newUserID}</cell>
-          <cell id="https://schema.org/familyName">{ request:parameter( 'https://schema.org/familyName' ) }</cell>
-          <cell id="https://schema.org/telephone">{ request:parameter( 'https://schema.org/telephone' ) }</cell>
+          <cell id="https://schema.org/familyName">{request:parameter('https://schema.org/familyName')}</cell>
+          <cell id="https://schema.org/telephone">{request:parameter('https://schema.org/telephone')}</cell>
           <cell id="Пространство имен">http://dbx.iro37.ru/unoi/сущности/учащиеся#</cell>
         </row>
     </table>

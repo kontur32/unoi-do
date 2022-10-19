@@ -12,6 +12,12 @@ import module namespace yandexID = "lib/modules/yandexID"
 import module namespace vkID = "lib/modules/vkID" 
   at "../../lib/modules/vkID.xqm";
 
+import module namespace getData = "getData" 
+  at '../../lib/modules/getData.xqm';
+import module namespace getForms = "modules/getForms"
+  at '../../lib/modules/getForms.xqm';
+
+
 declare 
   %rest:GET
   %rest:query-param("code", "{$code}")
@@ -31,10 +37,33 @@ function oauth:vkID(
   return
      if($userEmail)
     then(
-      let $userMeta:= oauth:getUserMeta($userEmail)
-      let $redir := oauth:loginRedirectURL()   
+     
+     let $userHash :=
+        lower-case(string(xs:hexBinary(hash:md5(lower-case($userEmail)))))
+     let $userID := 
+        'http://dbx.iro37.ru/unoi/сущности/учащиеся#' || $userHash
+     let $templateID :=
+       getForms:forms(
+         '.[starts-with(@label, "ЛК: Карточка учащегося")]', map{}
+       )/forms/form/@id/data()
+      let $xq :=
+        'declare variable $params external; 
+        .[@templateID=$params?templateID][row[@id=$params?userID]]'
+      let $userData := 
+        getData:getData(
+          $xq,map{'templateID':$templateID, 'userID':$userID}
+        )/data/table[last()] 
+      let $isRegistred := $userData/row/@id/data() = $userID
+      
       return
-        (oauth:setSession($userMeta), web:redirect($redir))
+        if($isRegistred)
+        then(
+          let $userMeta:= oauth:getUserMeta($userEmail)
+          let $redir := oauth:loginRedirectURL()   
+          return
+            (oauth:setSession($userMeta), web:redirect($redir))
+        )
+        else(<err:NOTREGISTRED>ошибка авторизации</err:NOTREGISTRED>)
     )
     else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
 };
