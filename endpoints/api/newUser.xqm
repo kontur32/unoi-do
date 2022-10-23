@@ -31,7 +31,14 @@ function newUser:main($email as xs:string){
         newUser:создатьПользователяМудл($поляАккаунтаМудл)
       )
     )
-    else(<err:SignUp>ошибка регистрации пользователя</err:SignUp>)
+    else(
+      session:set(
+          'loginMessage', 
+          'Ууупс... Возможно пользователь с логином ' || $email ||
+          ' уже зарегистрирован.'
+        ),
+      web:redirect(config:param('rootPath'))
+    )
 };
 
 
