@@ -54,7 +54,6 @@ function oauth:vkID(
           $xq,map{'templateID':$templateID, 'userID':$userID}
         )/data/table[last()] 
       let $isRegistred := $userData/row/@id/data() = $userID
-      
       return
         if($isRegistred)
         then(
@@ -72,7 +71,13 @@ function oauth:vkID(
           web:redirect(config:param('rootPath'))
         )
     )
-    else(<err:LOGINFAIL>ошибка авторизации</err:LOGINFAIL>)
+    else(
+      session:set(
+        'loginMessage', 
+        'Произошла ошибка: сервиса аутентификации ' || $oauthService || ' не удалось подтвердить Ваш логин.'
+      ),
+      web:redirect(config:param('rootPath'))
+    )
 };
 
 
