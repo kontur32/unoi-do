@@ -1,5 +1,9 @@
 module namespace content = 'content';
 
+declare function content:main2($params){
+  map{}
+};
+
 declare function content:main($params){
   let $userID := session:get('userID')  
   let $templates :=
