@@ -18,7 +18,7 @@ function newUser:main($email as xs:string){
   return
     if(
       $response[1]/@status/data() = "201" and 
-      newUser:sendPassword($response//id/text(), $password) !=''
+      newUser:sendPassword($email, $password) !=''
     )
     then(
       (
