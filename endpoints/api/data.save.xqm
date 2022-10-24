@@ -23,14 +23,14 @@ function data:main($templateID, $id, $aboutType, $redirect){
      if($userID)
      then(
      let $paramNames := 
-        for $name in  distinct-values( request:parameter-names() )
-        where not ( starts-with( $name, "_t24_" ) )
+        for $name in  distinct-values(request:parameter-names())
+        where not (starts-with( $name, "_t24_"))
         return $name  
        
        let $params := 
          map{
            "userID" : $userID,
-           "currentID" : if( $id = "" )then( random:uuid() )else( $id ),
+           "currentID" : if($id = "")then(random:uuid())else($id),
            "aboutType" : $aboutType,
            "templateID" : $templateID,
            "modelURL" : 'http://localhost:9984/zapolnititul/api/v2/forms/' || $templateID || '/model',

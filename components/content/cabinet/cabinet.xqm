@@ -12,12 +12,23 @@ declare function cabinet:main($params){
     let $data := cabinet:getData($params, $userID, $i/@id/data())  
     return
       $params?_t('content/formBuild',  map{'data': $data, 'form':$i})
+  
+  let $forms2 :=
+    for $i in $templates/form
+    let $data := cabinet:getData($params, $userID, $i/@id/data())  
+    return
+      $params?_t('content/formBuild',  map{'data': $data, 'form':$i || '2'})
   return
       map{
         'основныеСведения' : $forms[1],
         'личныеДанные' : $forms[2],
         'образование' : $forms[3],
-        'местоРаботы' : $forms[4]
+        'местоРаботы' : $forms[4],
+        
+        'основныеСведения2' : $forms2[1],
+        'личныеДанные2' : $forms2[2],
+        'образование2' : $forms2[3],
+        'местоРаботы2' : $forms2[4]
       }
 };
 
