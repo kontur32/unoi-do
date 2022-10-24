@@ -1,7 +1,6 @@
 module namespace cabinet = 'content/cabinet';
 
-declare function cabinet:main($params){map{}};
-declare function cabinet:main2($params){
+declare function cabinet:main($params){
   let $userID := session:get('userID')  
   let $templates :=
     $params?_api(
