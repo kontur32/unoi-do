@@ -4,6 +4,7 @@ declare function formBuild:main( $params ){
   let $data := $params?data
   let $formFields := $params?form/csv
   let $formName := $params?form/@label/data()
+  let $formName := random:uuid()
   let $служебныеПоляФормы :=
     map{
       'aboutType' : 'https://schema.org/Person',
