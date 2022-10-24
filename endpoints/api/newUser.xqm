@@ -34,7 +34,7 @@ function newUser:main($email as xs:string){
     else(
       session:set(
           'loginMessage', 
-          'Ууупс... Возможно пользователь с логином ' || $email ||
+          'Ууупс... Возможно, пользователь с логином ' || $email ||
           ' уже зарегистрирован.'
         ),
       web:redirect(config:param('rootPath'))
