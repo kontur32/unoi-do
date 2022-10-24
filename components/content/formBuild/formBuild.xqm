@@ -28,7 +28,7 @@ declare function formBuild:buildForm( $data as element( table ), $formName, $for
           <input form = "{ $formName }" type="text" name="{ $i/ID/text() }" value = "{ $data/row/cell[ @id/data() = $i/ID/text() ]/text()}" class="form-control" placeholder=""/>
       </div>
      return
-       <form class="card shadow rounded p-4 m-4" id="{ $formName }">
+       <form class="card shadow rounded p-2" id="{ $formName }">
          { $dataFields }
          <input form="{ $formName }" name="Пространство имен" value="{ $data/row/cell[ @id = 'Пространство имен' ]/text() }" hidden="yes"/>
          <input form="{ $formName }" name="id" value="{ $data/row/@id/data() }" hidden="yes"/>
