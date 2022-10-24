@@ -17,7 +17,7 @@ declare function cabinet:main($params){
     for $i in $templates/form
     let $data := cabinet:getData($params, $userID, $i/@id/data())  
     return
-      $params?_t('content/formBuild',  map{'data': $data, 'form':$i || '2'})
+      $params?_t('content/formBuild',  map{'data': $data, 'form':$i})
   return
       map{
         'основныеСведения' : $forms[1],
