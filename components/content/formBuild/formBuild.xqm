@@ -43,7 +43,7 @@ declare function formBuild:buildForm(
           <input form = "{$formName}" type="{$inputField?type}" name="{$i/ID/text()}" value = "{$inputField?value}" class="form-control" placeholder=""/>
       </div>
      return
-       <form class="card shadow rounded p-2" id="{$formName}">
+       <form class="card shadow rounded p-2" id="{$formName}" enctype="multipart/form-data">
          {$dataFields}
          <input form="{$formName}" name="Пространство имен" value="{$data/row/cell[@id = 'Пространство имен']/text()}" hidden="yes"/>
          <input form="{$formName}" name="id" value="{$data/row/@id/data()}" hidden="yes"/>
