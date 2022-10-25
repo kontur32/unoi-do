@@ -4,7 +4,7 @@ declare function cabinet:main($params){
   let $userID := session:get('userID')  
   let $templates :=
     $params?_api(
-      'getForms.forms', map{'xq' : '.[starts-with( @label, "ЛК:" )]'}
+      'getForms.forms', map{'xq':'.[starts-with(@label, "ЛК:")]'}
     )/forms
   
   let $forms :=

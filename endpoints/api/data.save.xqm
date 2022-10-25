@@ -4,9 +4,9 @@ import module namespace config = "app/config" at "../../lib/core/config.xqm";
 
 declare 
   %rest:POST
-  %rest:form-param ("_t24_templateID", "{ $templateID }", "")
-  %rest:form-param ("_t24_id", "{ $id }", "")
-  %rest:form-param ("_t24_type", "{ $aboutType }" )
+  %rest:form-param ("_t24_templateID", "{$templateID}", "")
+  %rest:form-param ("_t24_id", "{$id}", "")
+  %rest:form-param ("_t24_type", "{$aboutType}" )
   %rest:form-param ("_t24_saveRedirect", "{$redirect}", "/")
   %rest:path( "/unoi/do/api/v01/data")
 function data:main($templateID, $id, $aboutType, $redirect){
@@ -44,20 +44,20 @@ function data:main($templateID, $id, $aboutType, $redirect){
         config:param('api.method.getData'),
         session:get("accessToken")
       )
-    let $reponseCode := $response[ 1 ]/@status/data()
+    let $reponseCode := $response[1]/@status/data()
     let $message := 
-      if( $reponseCode = '200' )
-      then( 'Изменения сохранены' )
-      else( $response )
+      if($reponseCode = '200')
+      then('Изменения сохранены')
+      else($response)
     return
       web:redirect(
         web:create-url(
           $redirect,
-          map{ 'message' : $message }
+          map{'message' : $message}
         )
       )
     )
-    else( <err:AUTH01>ID пользователя не определен</err:AUTH01> )
+    else(<err:AUTH01>ID пользователя не определен</err:AUTH01>)
 };
 
 (: функция трансформируе запись в TRCI - можно исключить заменив:
@@ -104,9 +104,9 @@ function data:dataRecord($params){
           for $param in $params?paramNames
           (: если есть одинаковые параметры, то записыаются все :)
           let $paramValue := request:parameter( $param ) 
-          where not ( $paramValue instance of map(*)  ) and $paramValue
+          where not ($paramValue instance of map(*)) and $paramValue
           return
-              <cell label="{ web:decode-url( $param ) }">{ $paramValue }</cell>
+              <cell label="{web:decode-url($param)}">{$paramValue}</cell>
         }
         
         (: добавляет поля-файлы :)
@@ -121,9 +121,9 @@ function data:dataRecord($params){
           return
               <cell label="{$param}">
                 <table>
-                  <row id="{random:uuid()}" label="{map:keys( $paramValue )[1]}" type="https://schema.org/DigitalDocument">
+                  <row id="{random:uuid()}" label="{map:keys($paramValue )[1]}" type="https://schema.org/DigitalDocument">
                     <cell id="content">
-                      {xs:string( map:get($paramValue, map:keys($paramValue)[1]))}
+                      {xs:string(map:get($paramValue, map:keys($paramValue)[1]))}
                     </cell>
                   </row>
                 </table> 
