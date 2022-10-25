@@ -40,7 +40,7 @@ declare function formBuild:buildForm(
     return
       <div class="form-group">
           <label>{$i/label/text()}</label>
-          <input form = "{$formName}" type="{$inputField?value}" name="{$i/ID/text()}" value = "{$inputField?value}" class="form-control" placeholder=""/>
+          <input form = "{$formName}" type="{$inputField?type}" name="{$i/ID/text()}" value = "{$inputField?value}" class="form-control" placeholder=""/>
       </div>
      return
        <form class="card shadow rounded p-2" id="{$formName}">
