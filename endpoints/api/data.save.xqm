@@ -30,8 +30,15 @@ function data:main-tml($templateID, $id, $aboutType, $redirect){
        "modelURL" : 'http://localhost:9984/zapolnititul/api/v2/forms/' || $templateID || '/model',
        "paramNames" : $paramNames
      }
+  let $dataRecord := data:buildDataRecord(data:dataRecord($params))
+  let $response :=
+      data:postRecord(
+        $dataRecord,
+        config:param('api.method.getData'),
+        session:get("accessToken")
+      )
   return
-       <a><id>{$userID}</id>{data:buildDataRecord(data:dataRecord($params))}</a>
+       <a><id>{$userID}</id><response>{$response}</response>{$dataRecord}</a>
 };
 
 declare 
