@@ -10,7 +10,7 @@ declare
 function data:main-file($fileID){
   let $f := template:tpl('api/getFile', map{'fileID':$fileID})
   let $ContentDispositionValue := 
-      "attachment; filename=" || iri-to-uri($f/@label/data())
+      "attachment; filename=" || iri-to-uri($f/row/@label/data())
   return
     (
       <rest:response>
