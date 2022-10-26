@@ -1,6 +1,6 @@
 module namespace defaultFormField = "content/defaultFormField";
 
-declare function defaultFormField:main( $params as map(*) ){
+declare function defaultFormField:main($params as map(*)){
   map{
     'containerID' : $params?containerID,
     'templateID' : $params?templateID,

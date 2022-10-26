@@ -10,6 +10,13 @@ declare
   %rest:form-param ("_t24_saveRedirect", "{$redirect}", "/")
   %rest:path( "/unoi/do/api/v01/data/tmp")
 function data:main-tml($templateID, $id, $aboutType, $redirect){
+  let $userID := 
+     json:parse(
+       convert:binary-to-string(
+         xs:base64Binary(tokenize(session:get("accessToken"), '\.')[2])
+       )
+     )
+    /json/data/user/id/text()
   let $paramNames := 
       for $name in  distinct-values(request:parameter-names())
       where not (starts-with( $name, "_t24_"))
@@ -24,7 +31,7 @@ function data:main-tml($templateID, $id, $aboutType, $redirect){
        "paramNames" : $paramNames
      }
   return
-       data:buildDataRecord(data:dataRecord($params))
+       <a><id>{$userID}</id>{data:buildDataRecord(data:dataRecord($params))}</a>
 };
 
 declare 
