@@ -8,6 +8,31 @@ declare
   %rest:form-param ("_t24_id", "{$id}", "")
   %rest:form-param ("_t24_type", "{$aboutType}" )
   %rest:form-param ("_t24_saveRedirect", "{$redirect}", "/")
+  %rest:path( "/unoi/do/api/v01/data/tmp")
+function data:main-tml($templateID, $id, $aboutType, $redirect){
+  let $paramNames := 
+      for $name in  distinct-values(request:parameter-names())
+      where not (starts-with( $name, "_t24_"))
+      return $name  
+  let $params := 
+     map{
+       "userID" : '',
+       "currentID" : if($id = "")then(random:uuid())else($id),
+       "aboutType" : $aboutType,
+       "templateID" : $templateID,
+       "modelURL" : 'http://localhost:9984/zapolnititul/api/v2/forms/' || $templateID || '/model',
+       "paramNames" : $paramNames
+     }
+  return
+       data:buildDataRecord(data:dataRecord($params))
+};
+
+declare 
+  %rest:POST
+  %rest:form-param ("_t24_templateID", "{$templateID}", "")
+  %rest:form-param ("_t24_id", "{$id}", "")
+  %rest:form-param ("_t24_type", "{$aboutType}" )
+  %rest:form-param ("_t24_saveRedirect", "{$redirect}", "/")
   %rest:path( "/unoi/do/api/v01/data")
 function data:main($templateID, $id, $aboutType, $redirect){
    (:может быть ошибка при конвертации из-за '=' :)
@@ -83,7 +108,7 @@ function data:buildDataRecord($record){
   return 
     http:send-request(
       $request,
-      'http://localhost:9984/xlsx/api/v1/trci/bind/meta'
+      'http://dbx93.iro37.ru/xlsx/api/v1/trci/bind/meta'
     )[2]
 };
 
@@ -99,17 +124,14 @@ function data:dataRecord($params){
       modelURL = "{$params?modelURL}"
       status = "active">
       <row>
-        (: добавляет поля текстовые :)
         {
           for $param in $params?paramNames
           (: если есть одинаковые параметры, то записыаются все :)
-          let $paramValue := request:parameter( $param ) 
+          let $paramValue := request:parameter($param) 
           where not ($paramValue instance of map(*)) and $paramValue
           return
               <cell label="{web:decode-url($param)}">{$paramValue}</cell>
         }
-        
-        (: добавляет поля-файлы :)
         {
           for $param in $params?paramNames
           let $paramValue := request:parameter($param)

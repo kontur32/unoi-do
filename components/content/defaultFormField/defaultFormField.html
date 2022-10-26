@@ -1,10 +1,8 @@
 <div class="d-flex flex-column">
-
   <input form="{{formName}}" type="hidden" name="_t24_type" value="{{aboutType}}"></input>
   <input form="{{formName}}" type="hidden" name="_t24_templateID" value="{{templateID}}"/>
   <input form="{{formName}}" type="hidden" name="_t24_id" value="{{containerID}}"></input>
   <input form="{{formName}}" type="hidden" name="_t24_saveRedirect" value="{{saveRedirect}}"/>
 
-   <button form="{{formName}}" type="submit" formmethod="POST" formaction="{{formAction}}" class="btn btn-info">Сохранить</button>
-   <form id="{{formName}}" enctype="{{enctype}}"/>
+   <button form="{{formName}}" type="submit" formmethod="POST" formaction="{{formAction}}" formenctype="multipart/form-data" class="btn btn-info">Сохранить</button>
 </div>
