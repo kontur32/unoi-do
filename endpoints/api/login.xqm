@@ -19,12 +19,18 @@ function login:main($login as xs:string, $password as xs:string, $redirect){
     )
 
   let $user :=  login:getUserMeta($login)
+  let $accessToken := 
+    auth:getJWT(
+      config:param('authHost'),
+      config:param('login'),
+      config:param('password')
+    )
   let $userID :=
      template:tpl('serviceFunctions/userID', map{'userLogin':$login})/result/text()
   return
-    if(not($user?error))
+    if($accessToken)
     then(
-      session:set('accessToken', $user?accessToken),
+      session:set('accessToken',  $accessToken),
       session:set("login", $login),
       session:set("displayName", $login),
       session:set("userID", $userID),
