@@ -23,7 +23,7 @@ function data:main-tml($templateID, $id, $aboutType, $redirect){
       return $name  
   let $params := 
      map{
-       "userID" : '',
+       "userID" : $userID,
        "currentID" : if($id = "")then(random:uuid())else($id),
        "aboutType" : $aboutType,
        "templateID" : $templateID,
