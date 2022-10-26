@@ -17,57 +17,32 @@ function login:main($login as xs:string, $password as xs:string, $redirect){
       if($redirect)then($redirect)else(config:param('rootPath' ) || '/u' )
     )
 
-  let $user :=  login:getUserMeta($login, $password)
+  let $user :=  login:getUserMeta($login)
   return
     if(not($user?error))
     then(
       session:set('accessToken', $user?accessToken),
       session:set("login", $login),
-      session:set("displayName", $user?displayName),
+      session:set("displayName", $login),
       session:set("userID", $user?userID),
       web:redirect($redir) 
     )
     else(web:redirect(config:param('rootPath')))
 };
 
-declare function login:getUserMeta($login, $password){
+declare function login:getUserMeta($login){
   let $userHash :=
     lower-case(
       string(xs:hexBinary(hash:md5(lower-case($login))))
     )
   let $userID := 
     'http://dbx.iro37.ru/unoi/сущности/учащиеся#' || $userHash
+  let $accessToken :=
+    auth:getJWT(config:param('authHost'), config:param('login'), config:param('password'))
   return
     map{
       'displayName' : $login,
-      'accessToken' : auth:getJWT(config:param('authHost'), config:param('login'), config:param('password')),
+      'accessToken' : $accessToken,
       'userID' : $userID
   }
-};
-
-declare
-  %public
-function login:getToken( $host, $username, $password ) as xs:string*
-{
-  let $request := 
-    <http:request method='post'>
-      <http:multipart media-type = "multipart/form-data" >
-          <http:header name="Content-Disposition" value= 'form-data; name="username";'/>
-          <http:body media-type = "text/plain" >{ $username }</http:body>
-          <http:header name="Content-Disposition" value= 'form-data; name="password";' />
-          <http:body media-type = "text/plain">{ $password }</http:body>
-      </http:multipart> 
-    </http:request>
-  
-  let $response := 
-      http:send-request(
-        $request,
-        $host || "/wp-json/jwt-auth/v1/token"
-    )
-    return
-      if ( $response[ 1 ]/@status/data() = "200" )
-      then(
-        $response[ 2 ]//token/text()
-      )
-      else( )
 };
