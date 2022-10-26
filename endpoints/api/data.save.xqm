@@ -1,6 +1,15 @@
 module namespace data = "data.save";
 
 import module namespace config = "app/config" at "../../lib/core/config.xqm";
+import module namespace template="template" at "../../lib/core/template.xqm";
+
+(: для отладки отдачи загрузки :)
+declare 
+  %rest:GET
+  %rest:path( "/unoi/do/api/v01/file/{$fileID}")
+function data:main-file($fileID){
+  template:tpl('api/getFile', map{'fileID':$fileID})
+};
 
 (: для отладки загрузки файлов :)
 declare 
