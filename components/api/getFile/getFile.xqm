@@ -18,7 +18,7 @@ declare function getFile:getData($params, $fileID){
         'xq':$xq,
         'queryParams':map{'fileID':$fileID}
       }
-    )
+    )/data/row
   
   return
     if($data instance of element())
