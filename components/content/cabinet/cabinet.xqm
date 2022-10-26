@@ -6,6 +6,10 @@ declare function cabinet:main($params){
     $params?_api(
       'getForms.forms', map{'xq':'.[starts-with(@label, "ЛК:")]'}
     )/forms
+  let $templates2 :=
+    $params?_api(
+      'getForms.forms', map{'xq':'.[starts-with(@label, "ЛК файлы: паспорт")]'}
+    )/forms
   
   let $forms :=
     for $i in $templates/form
@@ -18,12 +22,21 @@ declare function cabinet:main($params){
     let $data := cabinet:getData($params, $userID, $i/@id/data())  
     return
       $params?_t('content/formBuild',  map{'data': $data, 'form':$i})
+  
+  let $forms3 :=
+    for $i in $templates2/form
+    let $data := cabinet:getData($params, $userID, $i/@id/data())  
+    return
+      $params?_t('content/formBuild',  map{'data': $data, 'form':$i})
+  
   return
       map{
         'основныеСведения' : $forms[1],
         'личныеДанные' : $forms[2],
         'образование' : $forms[3],
         'местоРаботы' : $forms[4],
+        
+        'документы' : $forms3[1],
         
         'основныеСведения2' : $forms2[1],
         'личныеДанные2' : $forms2[2],
