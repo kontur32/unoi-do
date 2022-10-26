@@ -18,7 +18,6 @@ function login:main($login as xs:string, $password as xs:string, $redirect){
       if($redirect)then($redirect)else(config:param('rootPath' ) || '/u' )
     )
 
-  let $user :=  login:getUserMeta($login)
   let $accessToken := 
     auth:getJWT(
       config:param('authHost'),
@@ -37,24 +36,4 @@ function login:main($login as xs:string, $password as xs:string, $redirect){
       web:redirect($redir) 
     )
     else(web:redirect(config:param('rootPath')))
-};
-
-declare function login:getUserMeta($login){
-  let $userHash :=
-    lower-case(
-      string(xs:hexBinary(hash:md5(lower-case($login))))
-    )
-  let $userID := 
-    'http://dbx.iro37.ru/unoi/сущности/учащиеся#' || $userHash
-  let $accessToken :=
-    auth:getJWT(
-      config:param('authHost'),
-      config:param('login'),
-      config:param('password')
-    )
-  return
-    map{
-      'accessToken' : $accessToken,
-      'userID' : $userID
-    }
 };

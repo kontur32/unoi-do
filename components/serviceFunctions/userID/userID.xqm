@@ -9,6 +9,6 @@ declare function userIDHash:main($params){
     map{
       'значение' :
       'http://dbx.iro37.ru/unoi/сущности/учащиеся#' ||
-      $params?_t( 'serviceFunctions/userIDHash', map{ 'login' : $userLogin } )/result/text()
+      $params?_t('serviceFunctions/userIDHash', map{'login':$userLogin})/result/text()
     }
 };
