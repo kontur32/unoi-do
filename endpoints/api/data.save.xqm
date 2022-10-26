@@ -8,7 +8,7 @@ declare
   %rest:GET
   %rest:path( "/unoi/do/api/v01/file/{$fileID}")
 function data:main-file($fileID){
-  template:tpl('api/getFile', map{'fileID':$fileID})
+  template:tpl('api/getFile', map{'fileID':$fileID})/file/text()
 };
 
 (: для отладки загрузки файлов :)
