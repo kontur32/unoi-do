@@ -35,7 +35,10 @@ declare function formBuild:buildForm(
           map{
             'type':'file',
             'value':'',
-            'label': <a href="/unoi/do/api/v01/file/{$data/row/cell[@id/data()=$i/ID/text()]/table/row/@id/data()}">{$i/label/text()}</a>
+            'label': 
+              if($data/row/cell[@id/data()=$i/ID/text()]/table/row/@id/data())
+              then(<a href="/unoi/do/api/v01/file/{$data/row/cell[@id/data()=$i/ID/text()]/table/row/@id/data()}">{$i/label/text()}</a>)
+              else($i/label/text())
           }
       default 
         return
