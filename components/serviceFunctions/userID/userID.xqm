@@ -1,10 +1,10 @@
 module namespace userIDHash = 'serviceFunctions/userID';
 
-declare function userIDHash:main( $params ){
+declare function userIDHash:main($params){
   let $userLogin :=
-    if( $params?userLogin )
-    then( $params?userLogin )
-    else(  session:get( 'login' ) )
+    if($params?userLogin)
+    then($params?userLogin)
+    else(session:get('login'))
   return
     map{
       'значение' :

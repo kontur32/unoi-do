@@ -2,6 +2,7 @@ module namespace login = "login";
 
 import module namespace config = "app/config" at "../../lib/core/config.xqm";
 import module namespace auth = "lib/modules/auth" at "../../lib/modules/auth.xqm";
+import module namespace template="template" at "../../lib/core/template.xqm";
 
 declare 
   %rest:GET
@@ -18,13 +19,15 @@ function login:main($login as xs:string, $password as xs:string, $redirect){
     )
 
   let $user :=  login:getUserMeta($login)
+  let $userID :=
+     template:tpl('serviceFunctions/userID', map{'userLogin':$login})/result/text()
   return
     if(not($user?error))
     then(
       session:set('accessToken', $user?accessToken),
       session:set("login", $login),
       session:set("displayName", $login),
-      session:set("userID", $user?userID),
+      session:set("userID", $userID),
       web:redirect($redir) 
     )
     else(web:redirect(config:param('rootPath')))

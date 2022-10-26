@@ -1,9 +1,9 @@
 module namespace data = "data.save";
 
-import module namespace config = "app/config" at "../../lib/core/config.xqm";
+import module namespace config="app/config" at "../../lib/core/config.xqm";
 import module namespace template="template" at "../../lib/core/template.xqm";
 
-(: для отладки отдачи загрузки :)
+(: для отдачи файла :)
 declare 
   %rest:GET
   %rest:path( "/unoi/do/api/v01/file/{$fileID}")
@@ -21,47 +21,6 @@ function data:main-file($fileID){
       </rest:response>,
       xs:base64Binary($f/row/cell/text())
     )
-  
-};
-
-(: для отладки загрузки файлов :)
-declare 
-  %rest:POST
-  %rest:form-param ("_t24_templateID", "{$templateID}", "")
-  %rest:form-param ("_t24_id", "{$id}", "")
-  %rest:form-param ("_t24_type", "{$aboutType}" )
-  %rest:form-param ("_t24_saveRedirect", "{$redirect}", "/")
-  %rest:path( "/unoi/do/api/v01/data/tmp")
-function data:main-tml($templateID, $id, $aboutType, $redirect){
-  let $userID := 
-     json:parse(
-       convert:binary-to-string(
-         xs:base64Binary(tokenize(session:get("accessToken"), '\.')[2])
-       )
-     )
-    /json/data/user/id/text()
-  let $paramNames := 
-      for $name in  distinct-values(request:parameter-names())
-      where not (starts-with( $name, "_t24_"))
-      return $name  
-  let $params := 
-     map{
-       "userID" : $userID,
-       "currentID" : if($id = "")then(random:uuid())else($id),
-       "aboutType" : $aboutType,
-       "templateID" : $templateID,
-       "modelURL" : 'http://localhost:9984/zapolnititul/api/v2/forms/' || $templateID || '/model',
-       "paramNames" : $paramNames
-     }
-  let $dataRecord := data:buildDataRecord(data:dataRecord($params))
-  let $response :=
-      data:postRecord(
-        $dataRecord,
-        config:param('api.method.getData'),
-        session:get("accessToken")
-      )
-  return
-       <result><id>{$userID}</id><response>{$response}</response>{$dataRecord}</result>
 };
 
 declare 
