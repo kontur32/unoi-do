@@ -3,7 +3,7 @@ module namespace newUser = "newUser";
 import module namespace config = "app/config" at "../../lib/core/config.xqm";
 import module namespace getData = "getData" at '../../lib/modules/getData.xqm';
 import module namespace getForms = "modules/getForms" at '../../lib/modules/getForms.xqm';
-import module namespace login = "login" at "login.xqm";
+
 import module namespace auth = "lib/modules/auth" at "../../lib/modules/auth.xqm";
 import module namespace data = "data.save" at "data.save.xqm";
 
@@ -130,7 +130,7 @@ declare function newUser:записьЛичномКабинете($userLogin){
     data:postRecord(
       $dataRecord,
       config:param('api.method.getData'),
-      login:getToken(
+      auth:getJWT(
         config:param('authHost'),
         config:param('login'),
         config:param('password')

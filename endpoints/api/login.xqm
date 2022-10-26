@@ -38,11 +38,14 @@ declare function login:getUserMeta($login){
   let $userID := 
     'http://dbx.iro37.ru/unoi/сущности/учащиеся#' || $userHash
   let $accessToken :=
-    auth:getJWT(config:param('authHost'), config:param('login'), config:param('password'))
+    auth:getJWT(
+      config:param('authHost'),
+      config:param('login'),
+      config:param('password')
+    )
   return
     map{
-      'displayName' : $login,
       'accessToken' : $accessToken,
       'userID' : $userID
-  }
+    }
 };
