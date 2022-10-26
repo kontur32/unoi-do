@@ -24,6 +24,6 @@ declare function getFile:getData($params, $fileID){
     if($data instance of element())
     then($data)
     else(
-      <err:D01>{$fileID}Не удалось получить электронный документ</err:D01>
+      <err:D01>{$fileID}{$data}Не удалось получить электронный документ</err:D01>
     )
 };
