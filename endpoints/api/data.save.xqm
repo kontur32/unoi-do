@@ -38,7 +38,7 @@ function data:main-tml($templateID, $id, $aboutType, $redirect){
         session:get("accessToken")
       )
   return
-       <a><id>{$userID}</id><response>{$response}</response>{$dataRecord}</a>
+       <result><id>{$userID}</id><response>{$response}</response>{$dataRecord}</result>
 };
 
 declare 
