@@ -30,16 +30,23 @@ declare function formBuild:buildForm(
     where not($i/inputType/text()) or  $i/inputType/text() != 'hidden'
     let $inputField :=
       switch($i/inputType/text())
-      case 'file' return map{'type':'file', 'value':''}
+      case 'file' 
+        return
+          map{
+            'type':'file',
+            'value':'',
+            'label': <a href="#{$i/row/@id/data()}">{$i/label/text()}</a>
+          }
       default 
         return
           map{
             'type':'text',
-            'value': $data/row/cell[@id/data() = $i/ID/text()]/text()
+            'value': $data/row/cell[@id/data() = $i/ID/text()]/text(),
+            'label': $i/label/text()
           }
     return
       <div class="form-group">
-          <label>{$i/label/text()}</label>
+          <label>{$inputField?label}</label>
           <input form = "{$formName}" type="{$inputField?type}" name="{$i/ID/text()}" value = "{$inputField?value}" class="form-control" placeholder=""/>
       </div>
      return

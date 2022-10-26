@@ -2,6 +2,7 @@ module namespace data = "data.save";
 
 import module namespace config = "app/config" at "../../lib/core/config.xqm";
 
+(: для отладки загрузки файлов :)
 declare 
   %rest:POST
   %rest:form-param ("_t24_templateID", "{$templateID}", "")
