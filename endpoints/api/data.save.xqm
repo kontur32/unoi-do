@@ -10,17 +10,17 @@ declare
 function data:main-file($fileID){
   let $f := template:tpl('api/getFile', map{'fileID':$fileID})
   let $ContentDispositionValue := 
-      "attachment; filename=" || iri-to-uri('file.pdf')
+      "attachment; filename=" || iri-to-uri($f/@label/data())
   return
     (
       <rest:response>
         <http:response status="200">
-          <http:header name="Content-Disposition" value="{$ContentDispositionValue}" />
+          <http:header name="Content-Disposition" value="{$ContentDispositionValue}"/>
           <http:header name="Content-type" value="application/octet-stream"/>
         </http:response>
       </rest:response>,
       xs:base64Binary($f/row/cell/text())
-   )
+    )
   
 };
 
