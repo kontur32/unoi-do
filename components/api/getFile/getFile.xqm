@@ -18,12 +18,12 @@ declare function getFile:getData($params, $fileID){
         'xq':$xq,
         'queryParams':map{'fileID':$fileID}
       }
-    )/data/table[last()]
+    )/data/table
   
   return
     if($data instance of element(table))
     then($data)
     else(
-      <err:D01>Не удалось получить электронный документ</err:D01>
+      <err:D01>{$fileID}Не удалось получить электронный документ</err:D01>
     )
 };
