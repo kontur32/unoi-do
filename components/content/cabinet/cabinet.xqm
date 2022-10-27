@@ -15,19 +15,19 @@ declare function cabinet:main($params){
     for $i in $templates/form
     let $data := cabinet:getData($params, $userID, $i/@id/data())  
     return
-      $params?_t('content/formBuild',  map{'data': $data, 'form':$i})
+      $params?_t('content/formBuild',  map{'data':$data, 'form':$i})
   
   let $forms2 :=
     for $i in $templates/form
     let $data := cabinet:getData($params, $userID, $i/@id/data())  
     return
-      $params?_t('content/formBuild',  map{'data': $data, 'form':$i})
+      $params?_t('content/formBuild',  map{'data':$data, 'form':$i})
   
   let $forms3 :=
     for $i in $templates3/form
     let $data := cabinet:getData($params, $userID, $i/@id/data())  
     return
-      $params?_t('content/formBuild',  map{'data': $data, 'form':$i})
+      $params?_t('content/formBuildFile',  map{'data':$data, 'form':$i})
   
   return
       map{
