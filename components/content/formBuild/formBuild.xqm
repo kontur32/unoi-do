@@ -9,13 +9,13 @@ declare function formBuild:main($params){
     map{
       'aboutType' : 'https://schema.org/Person',
       'templateID' : $data/@templateID/data(),
-      'containerID' : if( $data/@id/data() )then( $data/@id/data() )else( random:uuid() ),
+      'containerID' : if($data/@id/data())then($data/@id/data())else(random:uuid()),
       'formName' : $formName
     }
   return  
     map{
-      'форма' : formBuild:buildForm( $data, $formName, $formFields ),
-      'служебныеПоляФормы' : $params?_t( 'content/defaultFormField', $служебныеПоляФормы )
+      'форма' : formBuild:buildForm($data, $formName, $formFields),
+      'служебныеПоляФормы' : $params?_t('content/defaultFormField', $служебныеПоляФормы)
     }
 };
 
