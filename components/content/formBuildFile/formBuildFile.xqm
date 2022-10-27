@@ -10,16 +10,13 @@ declare function formBuildFile:main($params){
       'containerID':if($data/@id/data())then($data/@id/data())else(random:uuid()),
       'formName':$formName
     }
-  let $ii :=
-    let $i := $params?form/csv/record
-    where $i/inputType/text() = 'file'
-    return
-      $i[1]/ID/text()
+  let $имяПоляФайла :=
+    $params?form/csv/record[inputType/text() = 'file']/ID/text()
   return  
     map{
-      'названиеДокумента':$params?form/csv/record/label/text(),
+      'названиеДокумента':$params?form/csv/record[inputType/text() = 'file']/label/text(),
       'идентификаторФайла':$data/row/cell[@id/data()=$params?form/csv/record/ID/text()]/table/row/@id/data(),
-      'имяПоляФайла':$ii,
+      'имяПоляФайла':$имяПоляФайла,
       'идентификаторФормы':$formName,
       'containerID' : $служебныеПоляФормы?containerID,
       'templateID' : $служебныеПоляФормы?templateID,
