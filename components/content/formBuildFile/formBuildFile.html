@@ -5,10 +5,10 @@
       <label class="btn btn-info">Выбрать файл<input type="file" hidden="yes" form="{{идентификаторФормы}}"/></label>
     </div>
     <div class="col-2">
-      <input class="btn btn-info" type="submit" value="Сохранить" form="{{идентификаторФормы}}"/>
+      <input class="btn btn-info" type="submit" value="Сохранить" form="{{идентификаторФормы}}" formmethod="POST" formaction="/unoi/do/api/v01/data" formenctype="multipart/form-data"/>
     </div>
     <div class="col-2"><a class="btn btn-primary" href="/unoi/do/api/v01/file/{{идентификаторФайла}}">Скачать</a></div>
     <div class="col-2"><a class="btn btn-danger" href="#">Удалить</a></div>
   </div>
-  <form id="{{идентификаторФормы}}" formmethod="POST" formaction="/unoi/do/api/v01/data" formenctype="multipart/form-data"/>
+  <form id="{{идентификаторФормы}}"/>
 </div>
