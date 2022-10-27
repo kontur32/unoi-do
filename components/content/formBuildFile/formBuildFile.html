@@ -11,5 +11,9 @@
     <div class="col-2"><a class="btn btn-danger" href="#">Удалить</a></div>
   </div>
   <form id="{{идентификаторФормы}}"/>
-  {{служебныеПоляФормы}}
+  
+  <input form="{{formName}}" type="hidden" name="_t24_type" value="{{aboutType}}"></input>
+  <input form="{{formName}}" type="hidden" name="_t24_templateID" value="{{templateID}}"/>
+  <input form="{{formName}}" type="hidden" name="_t24_id" value="{{containerID}}"></input>
+  <input form="{{formName}}" type="hidden" name="_t24_saveRedirect" value="{{saveRedirect}}"/>
 </div>

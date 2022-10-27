@@ -21,6 +21,10 @@ declare function formBuildFile:main($params){
       'идентификаторФайла':$data/row/cell[@id/data()=$params?form/csv/record/ID/text()]/table/row/@id/data(),
       'имяПоляФайла':$ii,
       'идентификаторФормы':$formName,
+      'containerID' : $служебныеПоляФормы?containerID,
+      'templateID' : $служебныеПоляФормы?templateID,
+      'aboutType' : $служебныеПоляФормы?aboutType,
+      'saveRedirect' : '/unoi/do/u/cabinet',
       'служебныеПоляФормы':$params?_t('content/defaultFormField', $служебныеПоляФормы)
     }
 };
