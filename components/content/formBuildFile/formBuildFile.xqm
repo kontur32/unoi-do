@@ -14,6 +14,7 @@ declare function formBuildFile:main($params){
     map{
       'названиеДокумента':$params?form/csv/record/label/text(),
       'идентификаторФайла':$data/row/cell[@id/data()=$params?form/csv/record/ID/text()]/table/row/@id/data(),
+      'имяПоляФайла':$params?form/csv/record/ID/text(),
       'идентификаторФормы':$formName,
       'служебныеПоляФормы':$params?_t('content/defaultFormField', $служебныеПоляФормы)
     }
