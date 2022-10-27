@@ -12,7 +12,7 @@ declare function formBuildFile:main($params){
     }
   let $ii :=
     let $i := $params?form/csv/record
-    where not($i/inputType/text()) or  $i/inputType/text() != 'hidden'
+    where $i/inputType/text() != 'file'
     return
       $i[1]/ID/text()
   return  
