@@ -50,12 +50,12 @@ declare function formBuildFile:buildForm(
     return
       <div class="form-group">
           <label>{$inputField?label}</label>
-          <input form = "{$formName}" type="{$inputField?type}" name="{$i/ID/text()}" value = "{$inputField?value}" class="form-control" placeholder=""/>
+          <input form = "{$formName}" type="{$inputField?type}" name="{$i/ID/text()}" value = "{$inputField?value}" class="form-control" accept="pdf, jpeg" placeholder=""/>
       </div>
      return
        <form id="{$formName}">
          {$dataFields}
          <input form="{$formName}" name="Пространство имен" value="{$data/row/cell[@id = 'Пространство имен']/text()}" hidden="yes"/>
-         <input form="{$formName}" name="id" value="{$data/row/@id/data()}" accept="pdf, jpeg" hidden="yes"/>
+         <input form="{$formName}" name="id" value="{$data/row/@id/data()}" hidden="yes"/>
       </form>
 };
