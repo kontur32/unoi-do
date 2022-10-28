@@ -56,6 +56,6 @@ declare function formBuildFile:buildForm(
        <form id="{$formName}">
          {$dataFields}
          <input form="{$formName}" name="Пространство имен" value="{$data/row/cell[@id = 'Пространство имен']/text()}" hidden="yes"/>
-         <input form="{$formName}" name="id" value="{$data/row/@id/data()}" hidden="yes"/>
+         <input form="{$formName}" name="id" value="{$data/row/@id/data()}" accept="pdf, image/jpeg" hidden="yes"/>
       </form>
 };
