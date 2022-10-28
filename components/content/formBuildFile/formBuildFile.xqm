@@ -50,7 +50,7 @@ declare function formBuildFile:buildForm(
     return
       <div class="form-group">
           <label>{$inputField?label}</label>
-          <input form = "{$formName}" type="{$inputField?type}" name="{$i/ID/text()}" value = "{$inputField?value}" class="form-control" accept=".pdf" placeholder=""/>
+          <input form = "{$formName}" type="{$inputField?type}" name="{$i/ID/text()}" value = "{$inputField?value}" class="form-control" accept=".pdf, .jpg, .jpeg" placeholder=""/>
       </div>
      return
        <form id="{$formName}">
